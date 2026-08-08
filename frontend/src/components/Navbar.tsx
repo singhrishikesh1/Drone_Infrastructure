@@ -87,7 +87,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         {criticalCount > 0 && (
           <div className="hidden sm:flex items-center space-x-1.5 bg-red-950/60 text-red-400 border border-red-800/40 px-2.5 py-1 rounded-md text-xs font-mono font-medium animate-pulse">
             <Bell className="w-3.5 h-3.5 text-red-400" />
-            <span>{criticalCount} CRITICAL</span>
+            <span>{criticalCount} URGENT REPAIRS</span>
           </div>
         )}
 

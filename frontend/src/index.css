@@ -95,3 +95,18 @@
   animation: pulseGlow 2.5s ease-in-out infinite;
 }
 
+@keyframes spinFast {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.animate-spin-fast {
+  animation: spinFast 0.25s linear infinite;
+}
+
+.moving-drone-pin {
+  background: transparent;
+  border: none;
+  transition: transform 0.1s linear;
+}
+

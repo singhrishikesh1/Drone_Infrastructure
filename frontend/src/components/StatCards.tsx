@@ -24,12 +24,12 @@ export const StatCards: React.FC<StatCardsProps> = ({ summary, activeDronesCount
         </div>
       </div>
 
-      {/* Critical Risks */}
+      {/* Urgent Repairs */}
       <div className="glass-panel p-3.5 rounded-xl border border-red-500/30 bg-[#0A0F17]/90 shadow-xl flex items-center justify-between">
         <div>
-          <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider block">CRITICAL THREATS</span>
+          <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider block">URGENT REPAIRS</span>
           <h3 className="text-xl font-extrabold text-red-400 font-mono mt-0.5">{summary.criticalRisks} <span className="text-xs font-sans text-red-400/80 font-normal">Active</span></h3>
-          <p className="text-[10px] text-red-400/80 font-mono mt-0.5">High Priority Action</p>
+          <p className="text-[10px] text-red-400/80 font-mono mt-0.5">Urgent Repair Dispatch</p>
         </div>
         <div className="w-10 h-10 rounded-lg bg-red-500/10 border border-red-500/30 flex items-center justify-center text-red-400">
           <ShieldAlert className="w-5 h-5 animate-pulse" />

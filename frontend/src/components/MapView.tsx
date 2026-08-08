@@ -114,7 +114,7 @@ export const MapView: React.FC<MapViewProps> = ({ defects, selectedDefect, onSel
       <div className="absolute bottom-4 left-4 z-[400] glass-panel p-2.5 rounded-xl border border-slate-800 flex items-center space-x-3 text-[11px] font-medium text-slate-300">
         <div className="flex items-center space-x-1.5">
           <span className="w-2.5 h-2.5 rounded-full bg-red-500 shadow-sm shadow-red-500"></span>
-          <span>Critical</span>
+          <span>Urgent Repair</span>
         </div>
         <div className="flex items-center space-x-1.5">
           <span className="w-2.5 h-2.5 rounded-full bg-orange-500"></span>
