@@ -51,6 +51,7 @@ export interface AnalyticsSummary {
   totalInspections: number;
   criticalRisks: number;
   highRisks: number;
+  resolvedProblems?: number;
   totalEstimatedBudget: number;
   currency: string;
   byAssetType: {
@@ -60,3 +61,63 @@ export interface AnalyticsSummary {
     building: number;
   };
 }
+
+export interface DroneItem {
+  id: string;
+  name: string;
+  model: string;
+  status: 'FLYING' | 'CHARGING' | 'STANDBY' | 'MAINTENANCE';
+  assignedArea: string;
+  lat: number;
+  lng: number;
+  altitude: number;
+  speedKmH: number;
+  batteryPercent: number;
+  rotorHealth: number;
+  cameraStream: string;
+  lastServiceDate: string;
+  nextServiceDue: string;
+  totalFlightHours: number;
+}
+
+export interface ServiceRecord {
+  id: string;
+  droneId: string;
+  droneName: string;
+  serviceType: string;
+  date: string;
+  technician: string;
+  status: 'COMPLETED' | 'SCHEDULED' | 'IN_PROGRESS';
+  cost: string;
+  notes: string;
+}
+
+export interface RedisKeyItem {
+  key: string;
+  type: string;
+  ttl: number;
+  val: string;
+}
+
+export interface RedisStats {
+  status: string;
+  mode: string;
+  version: string;
+  memoryUsedMb: number;
+  totalKeys: number;
+  opsPerSec: number;
+  connectedClients: number;
+  pubSubChannels: string[];
+  recentKeys: RedisKeyItem[];
+  telemetryStream: {
+    channel: string;
+    activePayload: {
+      timestamp: string;
+      activeDronesCount: number;
+      puneBoundCenter: { lat: number; lng: number };
+      packetsProcessed: number;
+      cacheHitRatio: string;
+    };
+  };
+}
+

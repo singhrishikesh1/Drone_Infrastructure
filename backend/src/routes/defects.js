@@ -67,4 +67,22 @@ router.post('/analyze', async (req, res) => {
   }
 });
 
+// Update defect status (e.g. RESOLVED, IN_REVIEW, DISPATCHED)
+router.patch('/:id/status', (req, res) => {
+  try {
+    const { status } = req.body;
+    if (!status) {
+      return res.status(400).json({ success: false, error: 'Status is required' });
+    }
+    const updated = store.updateDefectStatus(req.params.id, status);
+    if (!updated) {
+      return res.status(404).json({ success: false, error: 'Defect not found' });
+    }
+    res.json({ success: true, data: updated });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 module.exports = router;
+

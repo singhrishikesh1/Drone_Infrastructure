@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Navbar } from './components/Navbar';
 import { StatCards } from './components/StatCards';
-import { MapView } from './components/MapView';
+import { GoogleMapView } from './components/GoogleMapView';
 import { DefectList } from './components/DefectList';
 import { DefectDetailModal } from './components/DefectDetailModal';
 import { AirSimUploadModal } from './components/AirSimUploadModal';
+import { Drone3DBackground } from './components/Drone3DBackground';
+import { RedisTelemetryDashboard } from './components/RedisTelemetryDashboard';
+import { DroneFleetServicing } from './components/DroneFleetServicing';
+import { ProblemSolvedLog } from './components/ProblemSolvedLog';
+import { ReportsManager } from './components/ReportsManager';
 import { Defect, AnalyticsSummary } from './types';
-import { Cpu, RefreshCw, Layers } from 'lucide-react';
 
 export const App: React.FC = () => {
   const [defects, setDefects] = useState<Defect[]>([]);
@@ -14,12 +18,13 @@ export const App: React.FC = () => {
     totalInspections: 4,
     criticalRisks: 2,
     highRisks: 1,
-    totalEstimatedBudget: 44870,
+    resolvedProblems: 1,
+    totalEstimatedBudget: 57600,
     currency: "₹",
-    byAssetType: { road: 1, bridge: 1, railway: 1, building: 1 }
+    byAssetType: { road: 2, bridge: 1, railway: 0, building: 1 }
   });
 
-  const [activeFilter, setActiveFilter] = useState<string>('all');
+  const [activeTab, setActiveTab] = useState<'map' | 'redis' | 'servicing' | 'problems' | 'reports'>('map');
   const [selectedDefect, setSelectedDefect] = useState<Defect | null>(null);
   const [isScanModalOpen, setIsScanModalOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
@@ -28,7 +33,7 @@ export const App: React.FC = () => {
   const fetchDefects = async () => {
     try {
       setLoading(true);
-      const res = await fetch(`http://localhost:5002/api/defects?assetType=${activeFilter}`);
+      const res = await fetch(`http://localhost:5002/api/defects`);
       const json = await res.json();
       if (json.success && json.data) {
         setDefects(json.data);
@@ -48,7 +53,7 @@ export const App: React.FC = () => {
 
   useEffect(() => {
     fetchDefects();
-  }, [activeFilter]);
+  }, []);
 
   const handleScanComplete = (newDefect: Defect) => {
     setDefects((prev) => [newDefect, ...prev]);
@@ -56,57 +61,96 @@ export const App: React.FC = () => {
     fetchDefects();
   };
 
-  const criticalCount = defects.filter((d) => d.riskLevel === 'CRITICAL').length;
+  const handleStatusChange = async (defectId: string, newStatus: 'RESOLVED' | 'DISPATCHED' | 'OPEN') => {
+    try {
+      const res = await fetch(`http://localhost:5002/api/defects/${defectId}/status`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus })
+      });
+      const json = await res.json();
+      if (json.success) {
+        setDefects(prev => prev.map(d => d.id === defectId ? { ...d, status: newStatus } : d));
+        fetchDefects();
+      }
+    } catch (err) {
+      setDefects(prev => prev.map(d => d.id === defectId ? { ...d, status: newStatus } : d));
+    }
+  };
+
+  const criticalCount = defects.filter((d) => d.riskLevel === 'CRITICAL' && d.status !== 'RESOLVED').length;
 
   return (
-    <div className="min-h-screen bg-[#090D16] text-slate-100 flex flex-col">
-      {/* Top Navbar */}
+    <div className="min-h-screen bg-[#06080f] text-slate-100 flex flex-col relative font-['Inter',sans-serif]">
+      {/* 3D Flying Drone Background Scene */}
+      <Drone3DBackground />
+
+      {/* Top Brand Navbar & Navigation */}
       <Navbar
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
         onOpenScanModal={() => setIsScanModalOpen(true)}
-        activeFilter={activeFilter}
-        setActiveFilter={setActiveFilter}
         criticalCount={criticalCount}
       />
 
-      {/* Main Dashboard Workspace */}
-      <main className="flex-1 p-6 space-y-6 max-w-7xl w-full mx-auto">
+      {/* Main Workspace View */}
+      <main className="flex-1 p-4 md:p-6 space-y-6 max-w-7xl w-full mx-auto z-10">
         
-        {/* Executive Stats Cards */}
-        <StatCards summary={summary} />
+        {/* Dynamic View Tab Switcher */}
+        {activeTab === 'map' && (
+          <div className="space-y-6 animate-fade-in">
+            {/* Executive Summary Cards */}
+            <StatCards summary={summary} activeDronesCount={3} />
 
-        {/* GIS Map & Defect Queue Split View */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-          
-          {/* GIS Interactive Map (7 cols) */}
-          <div className="lg:col-span-7">
-            <MapView
+            {/* GIS Map & Defect List Split */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+              {/* Google Map of Pune (7 cols) */}
+              <div className="lg:col-span-7">
+                <GoogleMapView
+                  defects={defects}
+                  selectedDefect={selectedDefect}
+                  onSelectDefect={(d) => setSelectedDefect(d)}
+                />
+              </div>
+
+              {/* Defect Queue (5 cols) */}
+              <div className="lg:col-span-5">
+                <DefectList
+                  defects={defects}
+                  selectedDefect={selectedDefect}
+                  onSelectDefect={(d) => setSelectedDefect(d)}
+                />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'redis' && (
+          <div className="animate-fade-in">
+            <RedisTelemetryDashboard />
+          </div>
+        )}
+
+        {activeTab === 'servicing' && (
+          <div className="animate-fade-in">
+            <DroneFleetServicing />
+          </div>
+        )}
+
+        {activeTab === 'problems' && (
+          <div className="animate-fade-in">
+            <ProblemSolvedLog
               defects={defects}
-              selectedDefect={selectedDefect}
-              onSelectDefect={(d) => setSelectedDefect(d)}
+              onStatusChange={handleStatusChange}
             />
           </div>
+        )}
 
-          {/* Defect Queue List (5 cols) */}
-          <div className="lg:col-span-5">
-            <DefectList
-              defects={defects}
-              selectedDefect={selectedDefect}
-              onSelectDefect={(d) => setSelectedDefect(d)}
-            />
+        {activeTab === 'reports' && (
+          <div className="animate-fade-in">
+            <ReportsManager defects={defects} />
           </div>
-
-        </div>
-
-        {/* Hackathon Architecture Footer Info */}
-        <footer className="glass-panel p-4 rounded-2xl border border-slate-800 flex flex-col md:flex-row items-center justify-between text-xs text-slate-400 gap-2">
-          <div className="flex items-center space-x-2">
-            <Cpu className="w-4 h-4 text-cyan-400" />
-            <span>Tech Stack: React • TypeScript • Node.js • Express • Python • YOLOv8 • OpenCV • Open3D • Leaflet.js • Twilio • Nodemailer</span>
-          </div>
-          <div className="text-slate-400">
-            System Status: <span className="text-emerald-400 font-bold">● AI Engine Online</span>
-          </div>
-        </footer>
+        )}
 
       </main>
 
@@ -118,7 +162,7 @@ export const App: React.FC = () => {
         />
       )}
 
-      {/* AirSim Flight Scan Modal */}
+      {/* AirSim Drone Scan Upload Modal */}
       <AirSimUploadModal
         isOpen={isScanModalOpen}
         onClose={() => setIsScanModalOpen(false)}

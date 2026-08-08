@@ -1,27 +1,19 @@
-# 🛸 Drone Infrastructure Inspector
+# 🛸 Drone Infrastructure
 
-> **AI-Powered Automated Monitoring of Roads, Bridges, Railways & Public Assets**
-> featuring 3D Volumetric Defect Estimation, Civil Material BOM Cost Prediction & Dynamic Risk Scoring.
+> **Autonomous AI-Powered Infrastructure Inspection & Real-Time Telemetry Platform**  
+> Featuring 3D Flying Drone Canvas, Pune Google Maps GIS Command (Viman Nagar, Kharadi, Wagholi), Redis Live Telemetry Pipeline, Fleet Maintenance & Servicing Module, and One-Click PDF Audit Downloads.
 
 ---
 
 ## 🌟 Key Features
 
-- **🚁 Multi-Asset Inspection Pipeline**: Detects Potholes (Roads), Structural Cracks (Concrete/Buildings), Steel Corrosion (Bridges), and Track Misalignments (Railways).
-- **📐 Open3D Volumetric Analysis**: Calculates exact 3D defect volume ($m^3$), surface area ($m^2$), and max depth ($\text{cm}$) from depth maps & point clouds.
-- **💰 Civil Engineering Material & Cost Engine**: Automatically estimates required materials (Bitumen Asphalt, Concrete 1:2:4 ratio, Zinc Primer, Rail Ballast) and repair budget based on civil unit rates.
-- **🚨 Dynamic Risk Scoring & Alerts**: Classifies defect risk (Low, Medium, High, Critical) and dispatches instant **Twilio SMS** and **Nodemailer Email** alerts.
-- **🗺️ Interactive GIS Web Map**: Built with React, TypeScript, Tailwind CSS, and Leaflet.js with custom risk-pin markers and heatmaps.
-- **📄 PDF Audit Report Exporter**: Generates official PDF audit reports for municipal and PWD authority sign-offs.
-
----
-
-## 🏗️ Tech Stack
-
-- **Frontend**: React.js, TypeScript, Tailwind CSS, Leaflet.js
-- **Backend API**: Node.js, Express.js, JWT, PDFKit, Nodemailer, Twilio API
-- **AI/ML Engine**: Python, OpenCV, YOLOv8, Open3D, NumPy
-- **Drone Simulator**: Microsoft AirSim API & Synthetic Data Stream Generator
+- **🚁 Autonomous Drone Fleet Tracking**: Live GPS coordinates, battery charge levels, rotor health diagnostics, and assigned sector radars across **Pune, Maharashtra** (Viman Nagar, Kharadi, Wagholi, Hadapsar).
+- **📐 3D Volumetric AI Defect Engine**: Calculates exact 3D defect volume ($m^3$), surface area ($m^2$), and max depth ($\text{cm}$) from point clouds.
+- **⚡ Redis Telemetry & Cache Pipeline**: Sub-millisecond telemetry cache, Pub/Sub channel queues (`drone:telemetry:pune`), and throughput metrics visualizer.
+- **🛠️ Drone Servicing & Maintenance Engine**: Track motor calibration, battery cycle logs, maintenance schedules, and book servicing tickets.
+- **✅ Solved Problem & Incident Remediation Log**: Track active vs remediated infrastructure defects with verified drone scan audit records.
+- **📄 One-Click PDF Audit Report Exporter**: Streams official civil engineering inspection reports directly from Node.js Express backend using PDFKit.
+- **🗺️ Pune Google Maps Command Center**: Google Maps JS integration centered on Pune with customized dark HUD styling and interactive sector markers.
 
 ---
 
@@ -40,17 +32,11 @@ npm install
 npm start
 ```
 
-### 3. Start React Web Dashboard (Port 3000)
+### 3. Start React Web Dashboard (Port 5173 / 3000)
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
 
-Open `http://localhost:3000` in your browser.
-
----
-
-## 📸 Screenshots & Architecture Diagram
-
-Check project architecture documentation in the repository design docs.
+Open `http://localhost:5173` in your browser.
