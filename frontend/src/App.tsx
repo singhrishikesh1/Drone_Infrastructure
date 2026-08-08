@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Navbar } from './components/Navbar';
 import { StatCards } from './components/StatCards';
+import { LiveTelemetryHUD } from './components/LiveTelemetryHUD';
 import { GoogleMapView } from './components/GoogleMapView';
 import { DefectList } from './components/DefectList';
 import { DefectDetailModal } from './components/DefectDetailModal';
@@ -81,11 +82,11 @@ export const App: React.FC = () => {
   const criticalCount = defects.filter((d) => d.riskLevel === 'CRITICAL' && d.status !== 'RESOLVED').length;
 
   return (
-    <div className="min-h-screen bg-[#06080f] text-slate-100 flex flex-col relative font-['Inter',sans-serif]">
+    <div className="min-h-screen bg-[#05070B] text-slate-100 flex flex-col relative font-['Inter',sans-serif] selection:bg-cyan-500 selection:text-aerospace-950">
       {/* 3D Flying Drone Background Scene */}
       <Drone3DBackground />
 
-      {/* Top Brand Navbar & Navigation */}
+      {/* Top Aerospace Brand & Navigation Header */}
       <Navbar
         activeTab={activeTab}
         setActiveTab={setActiveTab}
@@ -93,18 +94,21 @@ export const App: React.FC = () => {
         criticalCount={criticalCount}
       />
 
-      {/* Main Workspace View */}
-      <main className="flex-1 p-4 md:p-6 space-y-6 max-w-7xl w-full mx-auto z-10">
+      {/* Main Command Bridge Container */}
+      <main className="flex-1 p-3.5 md:p-5 space-y-4 max-w-[1600px] w-full mx-auto z-10">
         
+        {/* Dynamic Telemetry HUD Banner */}
+        <LiveTelemetryHUD />
+
         {/* Dynamic View Tab Switcher */}
         {activeTab === 'map' && (
-          <div className="space-y-6 animate-fade-in">
-            {/* Executive Summary Cards */}
+          <div className="space-y-4 animate-fade-in">
+            {/* Executive Metric Strip */}
             <StatCards summary={summary} activeDronesCount={3} />
 
-            {/* GIS Map & Defect List Split */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-              {/* Google Map of Pune (7 cols) */}
+            {/* GIS Operational Map & AI Defect Queue Split */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
+              {/* GIS Command Map (7 cols) */}
               <div className="lg:col-span-7">
                 <GoogleMapView
                   defects={defects}
@@ -113,7 +117,7 @@ export const App: React.FC = () => {
                 />
               </div>
 
-              {/* Defect Queue (5 cols) */}
+              {/* AI Infrastructure Intelligence Queue (5 cols) */}
               <div className="lg:col-span-5">
                 <DefectList
                   defects={defects}

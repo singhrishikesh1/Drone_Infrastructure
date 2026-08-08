@@ -1,14 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
 import { Defect } from '../types';
-import { Navigation, Cpu, Layers, MapPin, Eye } from 'lucide-react';
+import { Navigation, Cpu, Layers, MapPin, Radio, ShieldAlert } from 'lucide-react';
 
 interface MapViewProps {
   defects: Defect[];
   selectedDefect: Defect | null;
   onSelectDefect: (defect: Defect) => void;
-  activeAssetFilter?: string;
-  onAssetFilterChange?: (filter: string) => void;
 }
 
 export const GoogleMapView: React.FC<MapViewProps> = ({
@@ -25,13 +23,13 @@ export const GoogleMapView: React.FC<MapViewProps> = ({
     if (!containerRef.current) return;
 
     if (!mapRef.current) {
-      // Initialize Leaflet map centered on Pune Region, Maharashtra
+      // Initialize Leaflet map centered on Pune Region, MH
       const map = L.map(containerRef.current, {
         zoomControl: false,
         attributionControl: false
-      }).setView([18.5520, 73.9400], 12); // Centered on Pune
+      }).setView([18.5520, 73.9400], 12);
 
-      // CartoDB Dark Matter map tile layer - renders visual roads, bridges, streets & terrain
+      // CartoDB Dark Matter map tiles
       L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
         maxZoom: 19,
         subdomains: 'abcd'
@@ -39,7 +37,7 @@ export const GoogleMapView: React.FC<MapViewProps> = ({
 
       L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-      // Draw Drone Corridor Flight Path Polyline connecting Viman Nagar -> Kharadi -> Wagholi -> Hadapsar
+      // Drone Flight Corridor Polyline
       const flightCoords: L.LatLngExpression[] = [
         [18.5679, 73.9143], // Viman Nagar
         [18.5515, 73.9348], // Kharadi
@@ -51,8 +49,8 @@ export const GoogleMapView: React.FC<MapViewProps> = ({
       L.polyline(flightCoords, {
         color: '#00f3ff',
         weight: 2,
-        dashArray: '6, 6',
-        opacity: 0.8
+        dashArray: '8, 8',
+        opacity: 0.85
       }).addTo(map);
 
       mapRef.current = map;
@@ -60,23 +58,21 @@ export const GoogleMapView: React.FC<MapViewProps> = ({
 
     const map = mapRef.current;
 
-    // Remove existing markers
+    // Clear previous markers
     map.eachLayer((layer) => {
       if (layer instanceof L.Marker) {
         map.removeLayer(layer);
       }
     });
 
-    // Filter defects by assetType and location
+    // Filter defects by asset type & location
     const filteredDefects = defects.filter(d => {
       const matchAsset = activeAssetFilter === 'all' || d.assetType.toLowerCase() === activeAssetFilter.toLowerCase();
       const matchLoc = activeLocationFilter === 'all' || d.locationName.toLowerCase().includes(activeLocationFilter.toLowerCase());
       return matchAsset && matchLoc;
     });
 
-    const bounds = L.latLngBounds([]);
-
-    // Plot Pune infrastructure pins
+    // Plot pins with animated tactical SVG markers
     filteredDefects.forEach((defect) => {
       let pinColor = '#10B981'; // Green
       if (defect.riskLevel === 'CRITICAL') pinColor = '#EF4444'; // Red
@@ -87,30 +83,30 @@ export const GoogleMapView: React.FC<MapViewProps> = ({
         className: 'pune-map-pin',
         html: `
           <div style="position: relative; display: flex; align-items: center; justify-content: center;">
-            <div style="position: absolute; width: 34px; height: 34px; border-radius: 50%; background-color: ${pinColor}; opacity: 0.35; animation: ping 1.5s infinite;"></div>
-            <div style="position: relative; width: 24px; height: 24px; border-radius: 50%; background-color: ${pinColor}; border: 2px solid white; box-shadow: 0 0 14px ${pinColor}; display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 10px;">
+            <div style="position: absolute; width: 36px; height: 36px; border-radius: 50%; background-color: ${pinColor}; opacity: 0.35; animation: ping 1.8s ease-in-out infinite;"></div>
+            <div style="position: relative; width: 26px; height: 26px; border-radius: 50%; background-color: #0A0F17; border: 2px solid ${pinColor}; box-shadow: 0 0 16px ${pinColor}; display: flex; align-items: center; justify-content: center; color: ${pinColor}; font-weight: 800; font-family: 'JetBrains Mono', monospace; font-size: 10px;">
               ${defect.riskScore}
             </div>
           </div>
         `,
-        iconSize: [34, 34],
-        iconAnchor: [17, 17]
+        iconSize: [36, 36],
+        iconAnchor: [18, 18]
       });
 
       const marker = L.marker([defect.lat, defect.lng], { icon: customIcon }).addTo(map);
 
       const popupHtml = `
-        <div style="font-family: sans-serif; color: #0F172A; padding: 4px; max-width: 220px;">
-          <div style="font-size: 10px; font-weight: 700; color: ${pinColor}; text-transform: uppercase;">
+        <div style="font-family: 'Inter', sans-serif; background: #0A0F17; color: #F8FAFC; padding: 8px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); max-width: 220px;">
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 800; color: ${pinColor}; text-transform: uppercase; letter-spacing: 0.5px;">
             ${defect.riskLevel} RISK (${defect.riskScore}/100)
           </div>
-          <div style="font-size: 13px; font-weight: 700; margin-top: 2px; line-height: 1.2;">
+          <div style="font-size: 12px; font-weight: 700; margin-top: 3px; line-height: 1.3;">
             ${defect.title}
           </div>
-          <div style="font-size: 11px; color: #64748B; margin-top: 4px;">
+          <div style="font-size: 10px; color: #94A3B8; margin-top: 4px;">
             📍 ${defect.locationName}
           </div>
-          <div style="font-size: 11px; font-weight: 700; color: #0F172A; margin-top: 6px;">
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; color: #00F3FF; margin-top: 6px;">
             Est. Repair: ₹${defect.costEstimation?.total_estimated_cost?.toLocaleString()}
           </div>
         </div>
@@ -121,8 +117,6 @@ export const GoogleMapView: React.FC<MapViewProps> = ({
       marker.on('click', () => {
         onSelectDefect(defect);
       });
-
-      bounds.extend([defect.lat, defect.lng]);
     });
 
     if (selectedDefect && map) {
@@ -130,34 +124,33 @@ export const GoogleMapView: React.FC<MapViewProps> = ({
     }
   }, [defects, selectedDefect, activeAssetFilter, activeLocationFilter]);
 
-  const filteredDefectsCount = defects.filter(d => {
+  const filteredCount = defects.filter(d => {
     const matchAsset = activeAssetFilter === 'all' || d.assetType.toLowerCase() === activeAssetFilter.toLowerCase();
     const matchLoc = activeLocationFilter === 'all' || d.locationName.toLowerCase().includes(activeLocationFilter.toLowerCase());
     return matchAsset && matchLoc;
   }).length;
 
   return (
-    <div className="glass-panel rounded-2xl p-4 border border-slate-800 bg-[#0c1220]/90 shadow-2xl relative space-y-3">
-      {/* Header & Filter Controls Bar */}
-      <div className="flex flex-col space-y-3">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+    <div className="glass-panel rounded-xl p-3 border border-white/[0.08] bg-[#0A0F17]/90 shadow-2xl relative space-y-3 hud-border">
+      {/* Header Controls Bar */}
+      <div className="flex flex-col space-y-2.5">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5">
           <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 rounded-lg bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center">
-              <Navigation className="w-4 h-4 text-cyan-400 animate-pulse" />
+            <div className="w-7 h-7 rounded-lg bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center">
+              <Navigation className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
             </div>
             <div>
-              <h2 className="text-base font-bold text-slate-100 flex items-center gap-2">
-                Pune Region GIS Command Map
-                <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-semibold">
+              <h2 className="text-sm font-bold text-slate-100 uppercase tracking-wider font-mono flex items-center gap-2">
+                PUNE GIS OPERATIONAL RADAR
+                <span className="text-[9px] px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-mono font-bold">
                   LIVE GIS
                 </span>
               </h2>
-              <p className="text-xs text-slate-400">Monitoring Viman Nagar, Kharadi & Wagholi Infrastructure Corridors</p>
             </div>
           </div>
 
-          {/* Location Sector Filter Badges */}
-          <div className="flex items-center space-x-1.5 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0">
+          {/* Location Sector Filter Buttons */}
+          <div className="flex items-center space-x-1 overflow-x-auto w-full sm:w-auto font-mono text-[11px]">
             {[
               { id: 'all', label: 'All Pune' },
               { id: 'viman nagar', label: 'Viman Nagar' },
@@ -167,10 +160,10 @@ export const GoogleMapView: React.FC<MapViewProps> = ({
               <button
                 key={loc.id}
                 onClick={() => setActiveLocationFilter(loc.id)}
-                className={`px-2.5 py-1 text-xs rounded-lg transition-all font-medium ${
+                className={`px-2.5 py-1 rounded transition-all ${
                   activeLocationFilter === loc.id
-                    ? 'bg-cyan-500 text-slate-950 font-semibold shadow-lg shadow-cyan-500/20'
-                    : 'bg-slate-900/80 text-slate-400 hover:text-slate-200 border border-slate-800'
+                    ? 'bg-cyan-500 text-aerospace-950 font-bold shadow-md shadow-cyan-500/20'
+                    : 'bg-[#05070B] text-slate-400 hover:text-slate-200 border border-white/[0.06]'
                 }`}
               >
                 {loc.label}
@@ -179,25 +172,25 @@ export const GoogleMapView: React.FC<MapViewProps> = ({
           </div>
         </div>
 
-        {/* Asset Category Filters: All, Roads, Bridges, Railways, Buildings */}
-        <div className="flex items-center space-x-2 bg-slate-900/90 p-1.5 rounded-xl border border-slate-800 text-xs overflow-x-auto">
-          <span className="text-slate-400 font-semibold text-[11px] px-2 flex items-center gap-1">
-            <Layers className="w-3.5 h-3.5 text-cyan-400" /> Asset Filter:
+        {/* Asset Category Filters */}
+        <div className="flex items-center space-x-1.5 bg-[#05070B] p-1 rounded-lg border border-white/[0.06] text-[11px] font-mono overflow-x-auto">
+          <span className="text-slate-500 font-semibold px-2 flex items-center gap-1">
+            <Layers className="w-3 h-3 text-cyan-400" /> FILTER:
           </span>
           {[
             { id: 'all', label: 'All Assets' },
-            { id: 'road', label: '🛣️ Roads & Highways' },
-            { id: 'bridge', label: '🌉 Bridges & Flyovers' },
-            { id: 'railway', label: '🚆 Railway Tracks' },
-            { id: 'building', label: '🏢 Buildings & Facades' }
+            { id: 'road', label: '🛣️ Roads' },
+            { id: 'bridge', label: '🌉 Bridges' },
+            { id: 'railway', label: '🚆 Railways' },
+            { id: 'building', label: '🏢 Facades' }
           ].map(asset => (
             <button
               key={asset.id}
               onClick={() => setActiveAssetFilter(asset.id)}
-              className={`px-3 py-1 rounded-lg font-semibold transition-all whitespace-nowrap ${
+              className={`px-2.5 py-0.5 rounded font-medium transition-all whitespace-nowrap ${
                 activeAssetFilter === asset.id
-                  ? 'bg-cyan-500 text-slate-950 shadow-md shadow-cyan-500/20'
-                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
+                  ? 'bg-cyan-500 text-aerospace-950 font-bold'
+                  : 'text-slate-400 hover:text-slate-200'
               }`}
             >
               {asset.label}
@@ -206,46 +199,47 @@ export const GoogleMapView: React.FC<MapViewProps> = ({
         </div>
       </div>
 
-      {/* Actual Visual GIS Map Canvas Container */}
-      <div className="relative w-full h-[430px] rounded-xl overflow-hidden border border-slate-800 shadow-inner">
-        <div ref={containerRef} className="w-full h-full bg-[#06080f]" />
+      {/* Map Canvas */}
+      <div className="relative w-full h-[450px] rounded-lg overflow-hidden border border-white/[0.08] shadow-inner">
+        <div ref={containerRef} className="w-full h-full bg-[#05070B]" />
 
-        {/* Floating Telemetry Stats Overlay */}
-        <div className="absolute top-3 left-3 z-[400] bg-[#090d16]/95 backdrop-blur-md border border-slate-800 p-3 rounded-xl text-xs space-y-1.5 shadow-xl max-w-xs pointer-events-auto">
-          <div className="flex items-center justify-between text-slate-400 border-b border-slate-800 pb-1.5">
-            <span className="font-semibold text-slate-200 flex items-center gap-1.5">
-              <Cpu className="w-3.5 h-3.5 text-cyan-400" /> Pune Sector Radar
+        {/* Floating Telemetry Stats Box */}
+        <div className="absolute top-3 left-3 z-[400] bg-[#0A0F17]/90 backdrop-blur-md border border-white/[0.08] p-2.5 rounded-lg text-xs space-y-1 shadow-xl max-w-xs pointer-events-auto font-mono">
+          <div className="flex items-center justify-between text-slate-400 border-b border-white/[0.08] pb-1">
+            <span className="font-bold text-slate-200 text-[11px] flex items-center gap-1.5 uppercase">
+              <Cpu className="w-3.5 h-3.5 text-cyan-400" /> PUNE RADAR CORRIDOR
             </span>
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
           </div>
-          <div className="grid grid-cols-2 gap-2 pt-1 text-[11px]">
+          <div className="grid grid-cols-2 gap-2 pt-1 text-[10px]">
             <div>
-              <span className="text-slate-400 block">Region</span>
-              <span className="font-mono text-cyan-300 font-bold">Pune Region (MH)</span>
+              <span className="text-slate-500 block">SECTOR</span>
+              <span className="text-cyan-400 font-bold">Pune MH (5G RTK)</span>
             </div>
             <div>
-              <span className="text-slate-400 block">Active Markers</span>
-              <span className="font-mono text-emerald-400 font-bold">{filteredDefectsCount} Locations</span>
+              <span className="text-slate-500 block">ACTIVE TARGETS</span>
+              <span className="text-emerald-400 font-bold">{filteredCount} Markers</span>
             </div>
           </div>
         </div>
 
-        {/* Legend */}
-        <div className="absolute bottom-3 right-3 z-[400] bg-[#090d16]/95 backdrop-blur-md border border-slate-800 px-3 py-2 rounded-xl text-[11px] flex items-center space-x-4 shadow-xl">
+        {/* Legend Overlay */}
+        <div className="absolute bottom-3 right-3 z-[400] bg-[#0A0F17]/90 backdrop-blur-md border border-white/[0.08] px-3 py-1.5 rounded-lg text-[10px] font-mono flex items-center space-x-3 shadow-xl">
           <div className="flex items-center space-x-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-red-500 shadow-sm shadow-red-500" />
+            <span className="w-2 h-2 rounded-full bg-red-500 shadow-sm shadow-red-500 animate-pulse" />
             <span className="text-slate-300">Critical</span>
           </div>
           <div className="flex items-center space-x-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-orange-500" />
+            <span className="w-2 h-2 rounded-full bg-orange-500" />
             <span className="text-slate-300">High</span>
           </div>
           <div className="flex items-center space-x-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
-            <span className="text-slate-300">Low</span>
+            <span className="w-2 h-2 rounded-full bg-emerald-400" />
+            <span className="text-slate-300">Resolved</span>
           </div>
         </div>
       </div>
     </div>
   );
 };
+

@@ -4,35 +4,94 @@
 
 @layer utilities {
   .glass-panel {
-    background: rgba(15, 23, 42, 0.75);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(10, 15, 23, 0.78);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
   }
   
-  .glass-panel-glow {
-    background: rgba(15, 23, 42, 0.85);
-    backdrop-filter: blur(16px);
-    border: 1px solid rgba(34, 211, 238, 0.2);
-    box-shadow: 0 0 25px rgba(6, 182, 212, 0.08);
+  .glass-panel-cyan {
+    background: rgba(10, 15, 23, 0.88);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(0, 243, 255, 0.25);
+    box-shadow: 0 0 30px rgba(0, 243, 255, 0.08);
+  }
+
+  .glass-panel-purple {
+    background: rgba(10, 15, 23, 0.88);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(168, 85, 247, 0.25);
+    box-shadow: 0 0 30px rgba(168, 85, 247, 0.08);
+  }
+
+  .hud-border {
+    position: relative;
+  }
+  .hud-border::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 6px;
+    height: 6px;
+    border-top: 1.5px solid #00f3ff;
+    border-left: 1.5px solid #00f3ff;
+  }
+  .hud-border::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 6px;
+    height: 6px;
+    border-bottom: 1.5px solid #00f3ff;
+    border-right: 1.5px solid #00f3ff;
   }
 }
 
-/* Custom scrollbar */
+/* Custom Tactical Scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #0B0F19;
+  background: #05070B;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #1E293B;
-  border-radius: 3px;
+  background: #141E30;
+  border-radius: 2px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #334155;
+  background: #00f3ff;
 }
+
+/* Leaflet Map Pin Adjustments */
+.pune-map-pin {
+  background: transparent;
+  border: none;
+}
+
+/* Custom Keyframe Animations */
+@keyframes radarSweep {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.animate-radar {
+  animation: radarSweep 6s linear infinite;
+}
+
+@keyframes pulseGlow {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.9; }
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 2.5s ease-in-out infinite;
+}
+

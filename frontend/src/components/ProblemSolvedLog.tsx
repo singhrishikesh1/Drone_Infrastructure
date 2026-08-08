@@ -20,28 +20,28 @@ export const ProblemSolvedLog: React.FC<ProblemSolvedLogProps> = ({
   );
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 font-mono text-xs">
       {/* Header Banner */}
-      <div className="glass-panel p-6 rounded-2xl border border-slate-800 bg-[#0c1220]/90 shadow-2xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div className="glass-panel p-4 rounded-xl border border-white/[0.08] bg-[#0A0F17]/90 shadow-2xl flex flex-col md:flex-row items-start md:items-center justify-between gap-3 hud-border">
         <div className="flex items-center space-x-3">
-          <div className="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center">
-            <CheckCircle2 className="w-6 h-6 text-emerald-400" />
+          <div className="w-9 h-9 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center">
+            <CheckCircle2 className="w-5 h-5 text-emerald-400" />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-slate-100 flex items-center gap-2">
-              Infrastructure Incident & Problem Resolution Log
-              <span className="text-xs px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+            <h2 className="text-sm font-extrabold text-slate-100 uppercase tracking-wider flex items-center gap-2">
+              INCIDENT REMEDIATION & PROBLEM SOLVED LOG
+              <span className="text-[9px] px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
                 {resolvedDefects.length} PROBLEMS SOLVED
               </span>
             </h2>
-            <p className="text-xs text-slate-400">Tracked AI Volumetric Defects, Preventive Field Repairs & Disaster Mitigation</p>
+            <p className="text-[11px] text-slate-400 font-sans">AI Volumetric Defects, Preventive Field Repairs & Disaster Mitigation Verification</p>
           </div>
         </div>
 
         <div className="flex items-center space-x-3 text-right">
-          <div className="p-3 rounded-xl bg-slate-900/90 border border-slate-800">
-            <span className="text-slate-400 text-[11px] block">Prevented Disaster Cost</span>
-            <span className="text-base font-bold text-emerald-400 font-mono">
+          <div className="p-2.5 rounded-lg bg-[#05070B] border border-white/[0.08]">
+            <span className="text-slate-500 text-[10px] uppercase block">PREVENTED DISASTER COST</span>
+            <span className="text-base font-extrabold text-emerald-400">
               ₹{totalSavedBudget.toLocaleString()}
             </span>
           </div>
@@ -49,56 +49,56 @@ export const ProblemSolvedLog: React.FC<ProblemSolvedLogProps> = ({
       </div>
 
       {/* Main Grid Split */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Active Problems Needing Action */}
-        <div className="glass-panel p-5 rounded-2xl border border-slate-800 bg-[#0c1220]/90 space-y-4 shadow-xl">
-          <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-            <h3 className="text-sm font-bold text-slate-100 flex items-center gap-2">
-              <AlertTriangle className="w-4 h-4 text-orange-400" />
-              Active Infrastructure Defects ({activeDefects.length})
+        <div className="glass-panel p-4 rounded-xl border border-white/[0.08] bg-[#0A0F17]/90 space-y-3 shadow-xl">
+          <div className="flex items-center justify-between border-b border-white/[0.08] pb-2.5">
+            <h3 className="text-xs font-bold text-slate-100 uppercase tracking-wider flex items-center gap-2">
+              <AlertTriangle className="w-3.5 h-3.5 text-orange-400" />
+              ACTIVE DEFECTS NEEDING FIELD REPAIR ({activeDefects.length})
             </h3>
-            <span className="text-xs text-slate-400">Requires Field Crew</span>
+            <span className="text-[10px] text-slate-400">ACTION REQUIRED</span>
           </div>
 
-          <div className="space-y-3">
+          <div className="space-y-2.5">
             {activeDefects.map((defect) => (
               <div
                 key={defect.id}
-                className="p-4 rounded-xl bg-slate-900/80 border border-slate-800 hover:border-slate-700 transition-all space-y-3 text-xs"
+                className="p-3 rounded-lg bg-[#05070B] border border-white/[0.06] hover:border-slate-700 transition-all space-y-2 text-xs"
               >
                 <div className="flex items-start justify-between">
-                  <div className="space-y-1">
+                  <div className="space-y-0.5">
                     <div className="flex items-center space-x-2">
-                      <span className="px-2 py-0.5 rounded bg-red-500/20 text-red-400 font-bold font-mono text-[10px]">
+                      <span className="px-1.5 py-0.5 rounded bg-red-500/10 text-red-400 font-bold text-[10px] border border-red-500/20">
                         {defect.id}
                       </span>
-                      <span className="font-bold text-slate-100">{defect.title}</span>
+                      <span className="font-bold text-slate-100 font-sans">{defect.title}</span>
                     </div>
-                    <div className="text-slate-400">📍 {defect.locationName} ({defect.assetName})</div>
+                    <div className="text-slate-400 text-[11px]">📍 {defect.locationName} ({defect.assetName})</div>
                   </div>
                   <span
-                    className={`px-2.5 py-0.5 rounded-full font-bold text-[10px] ${
+                    className={`px-2 py-0.5 rounded font-bold text-[10px] ${
                       defect.riskLevel === 'CRITICAL'
-                        ? 'bg-red-500/20 text-red-400 border border-red-500/30'
-                        : 'bg-orange-500/20 text-orange-400 border border-orange-500/30'
+                        ? 'bg-red-500/10 text-red-400 border border-red-500/30'
+                        : 'bg-orange-500/10 text-orange-400 border border-orange-500/30'
                     }`}
                   >
                     {defect.riskLevel}
                   </span>
                 </div>
 
-                <div className="text-slate-300 bg-[#06080f] p-2.5 rounded-lg border border-slate-800/80 text-[11px]">
-                  <strong>AI Recommended Action:</strong> {defect.costEstimation?.recommended_action}
+                <div className="text-slate-300 bg-[#0A0F17] p-2 rounded border border-white/[0.04] text-[11px] font-sans">
+                  <strong className="font-mono text-cyan-400 text-[10px]">AI RECOMMENDATION:</strong> {defect.costEstimation?.recommended_action}
                 </div>
 
                 <div className="flex items-center justify-between pt-1">
-                  <span className="text-slate-400">Est. Repair: <strong className="text-slate-200">₹{defect.costEstimation?.total_estimated_cost?.toLocaleString()}</strong></span>
+                  <span className="text-slate-400 text-[11px]">EST. REPAIR: <strong className="text-slate-200">₹{defect.costEstimation?.total_estimated_cost?.toLocaleString()}</strong></span>
                   <button
                     onClick={() => onStatusChange(defect.id, 'RESOLVED')}
-                    className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold transition-all shadow-md"
+                    className="flex items-center space-x-1.5 px-3 py-1 rounded bg-emerald-500 hover:bg-emerald-400 text-aerospace-950 font-extrabold transition-all shadow text-[10px] uppercase"
                   >
                     <CheckCircle2 className="w-3.5 h-3.5" />
-                    <span>Mark Problem Solved</span>
+                    <span>MARK SOLVED</span>
                   </button>
                 </div>
               </div>
@@ -107,47 +107,47 @@ export const ProblemSolvedLog: React.FC<ProblemSolvedLogProps> = ({
         </div>
 
         {/* Solved Problems Audit Log */}
-        <div className="glass-panel p-5 rounded-2xl border border-slate-800 bg-[#0c1220]/90 space-y-4 shadow-xl">
-          <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-            <h3 className="text-sm font-bold text-slate-100 flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-              Resolved & Remediated Defects ({resolvedDefects.length})
+        <div className="glass-panel p-4 rounded-xl border border-white/[0.08] bg-[#0A0F17]/90 space-y-3 shadow-xl">
+          <div className="flex items-center justify-between border-b border-white/[0.08] pb-2.5">
+            <h3 className="text-xs font-bold text-slate-100 uppercase tracking-wider flex items-center gap-2">
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+              REMEDIATED DEFECT AUDIT LOG ({resolvedDefects.length})
             </h3>
-            <span className="text-xs text-emerald-400 font-semibold">● Solved & Verified</span>
+            <span className="text-[10px] text-emerald-400 font-bold">RESCAN VERIFIED</span>
           </div>
 
-          <div className="space-y-3">
+          <div className="space-y-2.5">
             {resolvedDefects.map((defect) => (
               <div
                 key={defect.id}
-                className="p-4 rounded-xl bg-slate-900/60 border border-emerald-500/20 space-y-3 text-xs"
+                className="p-3 rounded-lg bg-[#05070B] border border-emerald-500/20 space-y-2 text-xs"
               >
                 <div className="flex items-start justify-between">
-                  <div className="space-y-1">
+                  <div className="space-y-0.5">
                     <div className="flex items-center space-x-2">
-                      <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-bold font-mono text-[10px]">
+                      <span className="px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 font-bold text-[10px] border border-emerald-500/30">
                         {defect.id}
                       </span>
-                      <span className="font-bold text-slate-100">{defect.title}</span>
+                      <span className="font-bold text-slate-100 font-sans">{defect.title}</span>
                     </div>
-                    <div className="text-slate-400">📍 {defect.locationName}</div>
+                    <div className="text-slate-400 text-[11px]">📍 {defect.locationName}</div>
                   </div>
-                  <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-[10px] border border-emerald-500/30">
+                  <span className="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 font-bold text-[10px] border border-emerald-500/30">
                     RESOLVED
                   </span>
                 </div>
 
-                <div className="text-slate-400 text-[11px] bg-[#06080f] p-2.5 rounded-lg border border-slate-800">
-                  <span className="text-emerald-400 font-semibold">Resolution Audit:</span> Drone re-inspection scan verified crack filling and structural seal integrity. Zero safety risks remaining.
+                <div className="text-slate-400 text-[11px] bg-[#0A0F17] p-2 rounded border border-white/[0.04] font-sans">
+                  <span className="text-emerald-400 font-mono font-bold text-[10px]">RESOLUTION AUDIT:</span> Autonomous drone rescan verified crack filling & seal integrity. Zero risk remaining.
                 </div>
 
-                <div className="flex items-center justify-between pt-1 text-[11px]">
-                  <span className="text-slate-400">Inspector: {defect.inspector}</span>
+                <div className="flex items-center justify-between pt-0.5 text-[10px]">
+                  <span className="text-slate-500">INSPECTOR: {defect.inspector}</span>
                   <button
                     onClick={() => onStatusChange(defect.id, 'OPEN')}
-                    className="text-slate-500 hover:text-slate-300 underline text-[10px]"
+                    className="text-slate-500 hover:text-slate-300 underline"
                   >
-                    Re-open Ticket
+                    RE-OPEN TICKET
                   </button>
                 </div>
               </div>

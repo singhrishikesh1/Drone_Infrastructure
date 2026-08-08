@@ -15,8 +15,6 @@ export const RedisTelemetryDashboard: React.FC = () => {
         setStats(json.data);
       }
     } catch (err) {
-      console.log('Offline Redis simulator fallback');
-      // Fallback fallback stats
       setStats({
         status: "connected",
         mode: "standalone / cluster-ready",
@@ -55,112 +53,112 @@ export const RedisTelemetryDashboard: React.FC = () => {
   }, []);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 font-mono text-xs">
       {/* Header Banner */}
-      <div className="glass-panel p-6 rounded-2xl border border-slate-800 bg-[#0c1220]/90 shadow-2xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div className="glass-panel p-4 rounded-xl border border-white/[0.08] bg-[#0A0F17]/90 shadow-2xl flex flex-col md:flex-row items-start md:items-center justify-between gap-3 hud-border">
         <div className="flex items-center space-x-3">
-          <div className="w-12 h-12 rounded-xl bg-red-500/10 border border-red-500/30 flex items-center justify-center">
-            <Database className="w-6 h-6 text-red-500 animate-pulse" />
+          <div className="w-9 h-9 rounded-lg bg-red-500/10 border border-red-500/30 flex items-center justify-center">
+            <Database className="w-5 h-5 text-red-400 animate-pulse" />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-slate-100 flex items-center gap-2">
-              Redis Telemetry & In-Memory Data Pipeline
-              <span className="text-xs px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-mono">
-                ● ACTIVE CLUSTER
+            <h2 className="text-sm font-extrabold text-slate-100 uppercase tracking-wider flex items-center gap-2">
+              REDIS TELEMETRY & IN-MEMORY DATA PIPELINE
+              <span className="text-[9px] px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-bold">
+                ACTIVE CLUSTER
               </span>
             </h2>
-            <p className="text-xs text-slate-400">Sub-millisecond Real-Time GPS Telemetry, Pub/Sub Stream Queue & Cache Store</p>
+            <p className="text-[11px] text-slate-400 font-sans">Sub-millisecond Real-Time GPS Telemetry, Pub/Sub Stream Queue & Cache Store</p>
           </div>
         </div>
 
         <button
           onClick={fetchRedisStats}
-          className="flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:text-white border border-slate-700 text-xs transition-all"
+          className="flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-[#05070B] text-slate-300 hover:text-white border border-white/[0.08] text-xs transition-all"
         >
           <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
-          <span>Refresh Metrics</span>
+          <span>REFRESH METRICS</span>
         </button>
       </div>
 
       {/* Metrics Row */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="glass-panel p-4 rounded-xl border border-slate-800 bg-[#0c1220]/70 flex items-center space-x-3">
-          <div className="p-2.5 rounded-lg bg-cyan-500/10 text-cyan-400">
-            <Zap className="w-5 h-5" />
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        <div className="glass-panel p-3.5 rounded-xl border border-white/[0.08] bg-[#0A0F17]/90 flex items-center space-x-3">
+          <div className="p-2 rounded-lg bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+            <Zap className="w-4 h-4" />
           </div>
           <div>
-            <div className="text-xs text-slate-400 font-medium">Throughput</div>
-            <div className="text-xl font-bold text-slate-100 font-mono">
-              {stats?.opsPerSec || 485} <span className="text-xs text-slate-500 font-sans">ops/sec</span>
+            <div className="text-[10px] text-slate-400 font-medium uppercase">THROUGHPUT</div>
+            <div className="text-lg font-bold text-slate-100">
+              {stats?.opsPerSec || 485} <span className="text-[10px] text-slate-500 font-sans">ops/sec</span>
             </div>
           </div>
         </div>
 
-        <div className="glass-panel p-4 rounded-xl border border-slate-800 bg-[#0c1220]/70 flex items-center space-x-3">
-          <div className="p-2.5 rounded-lg bg-emerald-500/10 text-emerald-400">
-            <Activity className="w-5 h-5" />
+        <div className="glass-panel p-3.5 rounded-xl border border-white/[0.08] bg-[#0A0F17]/90 flex items-center space-x-3">
+          <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+            <Activity className="w-4 h-4" />
           </div>
           <div>
-            <div className="text-xs text-slate-400 font-medium">Cache Hit Ratio</div>
-            <div className="text-xl font-bold text-emerald-400 font-mono">
+            <div className="text-[10px] text-slate-400 font-medium uppercase">CACHE HIT RATIO</div>
+            <div className="text-lg font-bold text-emerald-400">
               {stats?.telemetryStream?.activePayload?.cacheHitRatio || '99.4%'}
             </div>
           </div>
         </div>
 
-        <div className="glass-panel p-4 rounded-xl border border-slate-800 bg-[#0c1220]/70 flex items-center space-x-3">
-          <div className="p-2.5 rounded-lg bg-purple-500/10 text-purple-400">
-            <Server className="w-5 h-5" />
+        <div className="glass-panel p-3.5 rounded-xl border border-white/[0.08] bg-[#0A0F17]/90 flex items-center space-x-3">
+          <div className="p-2 rounded-lg bg-purple-500/10 text-purple-400 border border-purple-500/20">
+            <Server className="w-4 h-4" />
           </div>
           <div>
-            <div className="text-xs text-slate-400 font-medium">Memory Footprint</div>
-            <div className="text-xl font-bold text-slate-100 font-mono">
-              {stats?.memoryUsedMb || 24.8} <span className="text-xs text-slate-500 font-sans">MB</span>
+            <div className="text-[10px] text-slate-400 font-medium uppercase">MEMORY FOOTPRINT</div>
+            <div className="text-lg font-bold text-slate-100">
+              {stats?.memoryUsedMb || 24.8} <span className="text-[10px] text-slate-500 font-sans">MB</span>
             </div>
           </div>
         </div>
 
-        <div className="glass-panel p-4 rounded-xl border border-slate-800 bg-[#0c1220]/70 flex items-center space-x-3">
-          <div className="p-2.5 rounded-lg bg-amber-500/10 text-amber-400">
-            <Radio className="w-5 h-5" />
+        <div className="glass-panel p-3.5 rounded-xl border border-white/[0.08] bg-[#0A0F17]/90 flex items-center space-x-3">
+          <div className="p-2 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20">
+            <Radio className="w-4 h-4" />
           </div>
           <div>
-            <div className="text-xs text-slate-400 font-medium">Pub/Sub Channels</div>
-            <div className="text-xl font-bold text-amber-400 font-mono">
-              {stats?.pubSubChannels?.length || 3} <span className="text-xs text-slate-500 font-sans">Active</span>
+            <div className="text-[10px] text-slate-400 font-medium uppercase">PUB/SUB CHANNELS</div>
+            <div className="text-lg font-bold text-amber-400">
+              {stats?.pubSubChannels?.length || 3} <span className="text-[10px] text-slate-500 font-sans">Active</span>
             </div>
           </div>
         </div>
       </div>
 
       {/* Detail Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Redis Keyspace Explorer (7 cols) */}
-        <div className="lg:col-span-7 glass-panel p-5 rounded-2xl border border-slate-800 bg-[#0c1220]/90 space-y-4">
-          <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-            <h3 className="text-sm font-bold text-slate-200 flex items-center gap-2">
-              <Database className="w-4 h-4 text-cyan-400" />
-              Live Redis Keyspace (`drone:*`)
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+        {/* Keyspace Explorer */}
+        <div className="lg:col-span-7 glass-panel p-4 rounded-xl border border-white/[0.08] bg-[#0A0F17]/90 space-y-3">
+          <div className="flex items-center justify-between border-b border-white/[0.08] pb-2.5">
+            <h3 className="text-xs font-bold text-slate-100 uppercase tracking-wider flex items-center gap-2">
+              <Database className="w-3.5 h-3.5 text-cyan-400" />
+              LIVE REDIS KEYSPACE (`drone:*`)
             </h3>
-            <span className="text-xs font-mono text-slate-400">Total Keys: {stats?.totalKeys || 1420}</span>
+            <span className="text-[10px] text-slate-400">Total Keys: {stats?.totalKeys || 1420}</span>
           </div>
 
-          <div className="space-y-2.5 overflow-y-auto max-h-[340px] pr-1">
+          <div className="space-y-2 overflow-y-auto max-h-[340px] pr-1">
             {stats?.recentKeys?.map((item, idx) => (
               <div
                 key={idx}
-                className="p-3 rounded-xl bg-slate-900/80 border border-slate-800 hover:border-slate-700 transition-all text-xs font-mono space-y-1"
+                className="p-2.5 rounded-lg bg-[#05070B] border border-white/[0.06] hover:border-slate-700 transition-all text-xs space-y-1"
               >
                 <div className="flex items-center justify-between text-slate-300">
-                  <span className="font-semibold text-cyan-400">{item.key}</span>
+                  <span className="font-bold text-cyan-400">{item.key}</span>
                   <div className="flex items-center space-x-2">
-                    <span className="px-2 py-0.5 rounded bg-slate-800 text-purple-300 text-[10px]">
+                    <span className="px-1.5 py-0.5 rounded bg-[#0A0F17] text-purple-300 text-[9px] border border-purple-500/20 font-bold">
                       {item.type.toUpperCase()}
                     </span>
                     <span className="text-slate-500 text-[10px]">TTL: {item.ttl}s</span>
                   </div>
                 </div>
-                <div className="text-slate-400 text-[11px] truncate bg-[#06080f] p-1.5 rounded border border-slate-800/60">
+                <div className="text-slate-400 text-[11px] truncate bg-[#0A0F17] p-1.5 rounded border border-white/[0.04]">
                   {item.val}
                 </div>
               </div>
@@ -168,45 +166,45 @@ export const RedisTelemetryDashboard: React.FC = () => {
           </div>
         </div>
 
-        {/* Real-time Pub/Sub Telemetry Stream (5 cols) */}
-        <div className="lg:col-span-5 glass-panel p-5 rounded-2xl border border-slate-800 bg-[#0c1220]/90 space-y-4">
-          <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-            <h3 className="text-sm font-bold text-slate-200 flex items-center gap-2">
-              <Radio className="w-4 h-4 text-emerald-400 animate-pulse" />
-              Pub/Sub Stream (`drone:telemetry:pune`)
+        {/* Pub/Sub Stream */}
+        <div className="lg:col-span-5 glass-panel p-4 rounded-xl border border-white/[0.08] bg-[#0A0F17]/90 space-y-3">
+          <div className="flex items-center justify-between border-b border-white/[0.08] pb-2.5">
+            <h3 className="text-xs font-bold text-slate-100 uppercase tracking-wider flex items-center gap-2">
+              <Radio className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
+              PUB/SUB STREAM (`drone:telemetry:pune`)
             </h3>
           </div>
 
-          <div className="space-y-3">
-            <div className="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 text-xs space-y-2">
+          <div className="space-y-2.5">
+            <div className="p-3 rounded-lg bg-[#05070B] border border-white/[0.06] text-xs space-y-2">
               <div className="flex items-center justify-between text-slate-400">
                 <span>Active Target</span>
-                <span className="font-mono text-cyan-300">Pune Infrastructure Nodes</span>
+                <span className="text-cyan-300 font-bold">Pune Nodes</span>
               </div>
               <div className="flex items-center justify-between text-slate-400">
                 <span>Packets Ingested</span>
-                <span className="font-mono text-emerald-400">
+                <span className="text-emerald-400 font-bold">
                   {stats?.telemetryStream?.activePayload?.packetsProcessed?.toLocaleString() || '148,290'}
                 </span>
               </div>
               <div className="flex items-center justify-between text-slate-400">
                 <span>Timestamp</span>
-                <span className="font-mono text-slate-300">
+                <span className="text-slate-300">
                   {new Date().toLocaleTimeString()}
                 </span>
               </div>
             </div>
 
-            <div className="p-3.5 rounded-xl bg-[#06080f] border border-slate-800 text-xs space-y-2">
-              <div className="text-slate-400 font-semibold text-[11px] uppercase tracking-wider flex items-center justify-between">
+            <div className="p-3 rounded-lg bg-[#05070B] border border-white/[0.06] text-xs space-y-2">
+              <div className="text-slate-400 font-bold text-[10px] uppercase tracking-wider flex items-center justify-between">
                 <span>Subscribed Channels</span>
                 <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
               </div>
               <ul className="space-y-1.5 pt-1">
                 {stats?.pubSubChannels?.map((ch, idx) => (
-                  <li key={idx} className="font-mono text-cyan-400 text-[11px] flex items-center justify-between">
+                  <li key={idx} className="text-cyan-400 text-[11px] flex items-center justify-between">
                     <span>• {ch}</span>
-                    <span className="text-[10px] text-slate-500">SUBSCRIBED</span>
+                    <span className="text-[9px] text-slate-500">SUBSCRIBED</span>
                   </li>
                 ))}
               </ul>
@@ -217,3 +215,4 @@ export const RedisTelemetryDashboard: React.FC = () => {
     </div>
   );
 };
+
