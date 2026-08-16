@@ -12,4 +12,4 @@
 - 3D Volumetric AI Defect Engine**: Calculates exact 3D defect volume ($m^3$), surface area ($m^2$), and max depth ($\text{cm}$) from point clouds.
 - Redis Telemetry & Cache Pipeline**: Sub-millisecond telemetry cache, Pub/Sub channel queues (`drone:telemetry:pune`), and throughput metrics visualizer.
 - Drone Servicing & Maintenance Engine**: Track motor calibration, battery cycle logs, maintenance schedules, and book servicing tickets.
-- Solved Problem & Incident Remediation Log**: Track active vs remediated infrastructure 
+- Solved Problem & Incident Remediation Log**: Track active vs remediated 
