@@ -14,4 +14,3 @@
 - Drone Servicing & Maintenance Engine**: Track motor calibration, battery cycle logs, maintenance schedules, and book servicing tickets.
 - Solved Problem & Incident Remediation Log**: Track active vs remediated infrastructure defects with verified drone scan audit records.
 - One-Click PDF Audit Report Exporter**: Streams official civil engineering inspection reports directly from Node.js Express backend using PDFKit.
-- Pune Google Maps Command Center**: Google Maps JS integration centered on Pune with customized dark HUD styling and interactive sector markers.
