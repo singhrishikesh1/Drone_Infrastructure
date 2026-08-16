@@ -13,4 +13,3 @@
 - Redis Telemetry & Cache Pipeline**: Sub-millisecond telemetry cache, Pub/Sub channel queues (`drone:telemetry:pune`), and throughput metrics visualizer.
 - Drone Servicing & Maintenance Engine**: Track motor calibration, battery cycle logs, maintenance schedules, and book servicing tickets.
 - Solved Problem & Incident Remediation Log**: Track active vs remediated infrastructure defects with verified drone scan audit records.
-- One-Click PDF Audit Report Exporter**: Streams official civil engineering inspection 
