@@ -27,15 +27,15 @@ export const LiveTelemetryHUD: React.FC = () => {
   }, []);
 
   return (
-    <div className="glass-panel p-3 rounded-xl border border-[#152535] bg-[#101C28] text-xs flex flex-wrap items-center justify-between gap-4 font-mono shadow-md">
+    <div className="glass-panel p-3 rounded-2xl border border-[#FBCFE8] bg-[#FFFFFF] text-xs flex flex-wrap items-center justify-between gap-4 font-mono shadow-xs">
       {/* Active Unit Badge */}
       <div className="flex items-center space-x-2">
-        <div className="w-2 h-2 rounded-full bg-[#16B9E8] animate-pulse" />
-        <span className="text-[#F1F5F9] font-extrabold tracking-wider text-[11px] uppercase">
-          UNIT: <span className="text-[#16B9E8]">SKYGUARDIAN-X1</span>
+        <div className="w-2.5 h-2.5 rounded-full bg-[#E11D48] animate-pulse" />
+        <span className="text-[#831843] font-extrabold tracking-wider text-[11px] uppercase flex items-center gap-1">
+          UNIT: <span className="text-[#E11D48] font-bold">SKYGUARDIAN-X1</span> 🧸
         </span>
-        <span className="text-[10px] px-2 py-0.5 rounded bg-[#16B9E8]/10 text-[#16B9E8] border border-[#16B9E8]/30 font-bold">
-          RTK FIX (18 SAT)
+        <span className="text-[10px] px-2 py-0.5 rounded-md bg-[#FFF1F2] text-[#E11D48] border border-[#F43F5E]/30 font-bold">
+          RTK FIX (18 SAT) 💕
         </span>
       </div>
 
@@ -43,42 +43,42 @@ export const LiveTelemetryHUD: React.FC = () => {
       <div className="flex items-center space-x-5 overflow-x-auto text-[11px]">
         {/* Mode */}
         <div className="flex items-center space-x-1.5">
-          <Zap className="w-3.5 h-3.5 text-[#22C55E]" />
-          <span className="text-[#94A3B8]">STATUS:</span>
-          <span className="text-[#22C55E] font-bold">{telemetry.mode}</span>
+          <Zap className="w-3.5 h-3.5 text-[#16A34A]" />
+          <span className="text-[#9D174D]">STATUS:</span>
+          <span className="text-[#16A34A] font-extrabold">{telemetry.mode}</span>
         </div>
 
         {/* Coordinates */}
         <div className="flex items-center space-x-1.5">
-          <Navigation className="w-3.5 h-3.5 text-[#16B9E8]" />
-          <span className="text-[#94A3B8]">GPS:</span>
-          <span className="text-[#F1F5F9]">{telemetry.lat}° N, {telemetry.lng}° E</span>
+          <Navigation className="w-3.5 h-3.5 text-[#E11D48]" />
+          <span className="text-[#9D174D]">GPS:</span>
+          <span className="text-[#831843] font-bold">{telemetry.lat}° N, {telemetry.lng}° E</span>
         </div>
 
         {/* Altitude */}
         <div className="flex items-center space-x-1.5">
-          <span className="text-[#94A3B8]">ALT:</span>
-          <span className="text-[#16B9E8] font-bold">{telemetry.altitude}m</span>
+          <span className="text-[#9D174D]">ALT:</span>
+          <span className="text-[#E11D48] font-extrabold">{telemetry.altitude}m</span>
         </div>
 
         {/* Speed */}
         <div className="flex items-center space-x-1.5">
-          <span className="text-[#94A3B8]">SPD:</span>
-          <span className="text-[#F1F5F9] font-bold">{telemetry.speed} km/h</span>
+          <span className="text-[#9D174D]">SPD:</span>
+          <span className="text-[#831843] font-extrabold">{telemetry.speed} km/h</span>
         </div>
 
         {/* Battery */}
         <div className="flex items-center space-x-1.5">
-          <Battery className="w-3.5 h-3.5 text-[#22C55E]" />
-          <span className="text-[#94A3B8]">BATT:</span>
-          <span className="text-[#22C55E] font-bold">{telemetry.battery}%</span>
+          <Battery className="w-3.5 h-3.5 text-[#16A34A]" />
+          <span className="text-[#9D174D]">BATT:</span>
+          <span className="text-[#16A34A] font-extrabold">{telemetry.battery}%</span>
         </div>
 
         {/* Signal Link */}
         <div className="flex items-center space-x-1.5">
-          <Signal className="w-3.5 h-3.5 text-[#16B9E8]" />
-          <span className="text-[#94A3B8]">LINK:</span>
-          <span className="text-[#16B9E8] font-bold">{telemetry.signalDbm} dBm</span>
+          <Signal className="w-3.5 h-3.5 text-[#E11D48]" />
+          <span className="text-[#9D174D]">LINK:</span>
+          <span className="text-[#E11D48] font-extrabold">{telemetry.signalDbm} dBm</span>
         </div>
       </div>
     </div>

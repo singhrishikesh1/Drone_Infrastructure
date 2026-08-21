@@ -10,6 +10,8 @@ import { Drone3DBackground } from './components/Drone3DBackground';
 import { DroneFleetServicing } from './components/DroneFleetServicing';
 import { ProblemSolvedLog } from './components/ProblemSolvedLog';
 import { ReportsManager } from './components/ReportsManager';
+import { HeartPopEffect } from './components/HeartPopEffect';
+import { SideTeddyBears } from './components/SideTeddyBears';
 import { Defect, AnalyticsSummary } from './types';
 
 export const App: React.FC = () => {
@@ -81,101 +83,107 @@ export const App: React.FC = () => {
   const criticalCount = defects.filter((d) => d.riskLevel === 'CRITICAL' && d.status !== 'RESOLVED').length;
 
   return (
-    <div className="min-h-screen bg-[#08111A] text-[#F1F5F9] flex flex-col relative font-sans">
-      {/* 3D Flying Drone Background Scene */}
-      <Drone3DBackground />
+    <HeartPopEffect>
+      <div className="min-h-screen bg-[#FDF2F8] text-[#831843] flex flex-col relative font-sans">
+        {/* 3D Flying Drone Background Scene */}
+        <Drone3DBackground />
 
-      {/* Top Aerospace Brand & Navigation Header (DRONACHARYA) */}
-      <Navbar
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
-        onOpenScanModal={() => setIsScanModalOpen(true)}
-        criticalCount={criticalCount}
-      />
+        {/* Side Teddy Bear Companions */}
+        <SideTeddyBears />
 
-      {/* Main Command Bridge Container */}
-      <main className="flex-1 p-3.5 md:p-5 space-y-4 max-w-[1600px] w-full mx-auto z-10">
-        
-        {/* Dynamic Telemetry HUD Banner */}
-        <LiveTelemetryHUD />
+        {/* Top Aerospace Brand & Navigation Header (DRONACHARYA) */}
+        <Navbar
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          onOpenScanModal={() => setIsScanModalOpen(true)}
+          criticalCount={criticalCount}
+        />
 
-        {/* Tab 1: LIVE TELEMETRY */}
-        {activeTab === 'telemetry' && (
-          <div className="space-y-4 animate-fade-in">
-            {/* Metric Cards (Single Active Drone SkyGuardian-X1) */}
-            <StatCards summary={summary} activeDronesCount={1} />
+        {/* Main Command Bridge Container */}
+        <main className="flex-1 p-3.5 md:p-5 space-y-4 max-w-[1600px] w-full mx-auto z-10">
+          
+          {/* Dynamic Telemetry HUD Banner */}
+          <LiveTelemetryHUD />
 
-            {/* GIS Road Patrol Map & Live Inspection Alerts Split */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
-              {/* GIS Command Map (7 cols) */}
-              <div className="lg:col-span-7">
-                <GoogleMapView
-                  defects={defects}
-                  selectedDefect={selectedDefect}
-                  onSelectDefect={(d) => setSelectedDefect(d)}
-                />
-              </div>
+          {/* Tab 1: LIVE TELEMETRY */}
+          {activeTab === 'telemetry' && (
+            <div className="space-y-4 animate-fade-in">
+              {/* Metric Cards (Single Active Drone SkyGuardian-X1) */}
+              <StatCards summary={summary} activeDronesCount={1} />
 
-              {/* Live Inspection Alerts (5 cols) */}
-              <div className="lg:col-span-5">
-                <DefectList
-                  defects={defects}
-                  selectedDefect={selectedDefect}
-                  onSelectDefect={(d) => setSelectedDefect(d)}
-                />
+              {/* GIS Road Patrol Map & Live Inspection Alerts Split */}
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
+                {/* GIS Command Map (7 cols) */}
+                <div className="lg:col-span-7">
+                  <GoogleMapView
+                    defects={defects}
+                    selectedDefect={selectedDefect}
+                    onSelectDefect={(d) => setSelectedDefect(d)}
+                  />
+                </div>
+
+                {/* Live Inspection Alerts (5 cols) */}
+                <div className="lg:col-span-5">
+                  <DefectList
+                    defects={defects}
+                    selectedDefect={selectedDefect}
+                    onSelectDefect={(d) => setSelectedDefect(d)}
+                  />
+                </div>
               </div>
             </div>
-          </div>
+          )}
+
+          {/* Tab 2: DRONE */}
+          {activeTab === 'drone' && (
+            <div className="animate-fade-in">
+              <DroneFleetServicing />
+            </div>
+          )}
+
+          {/* Tab 3: DEFECTS */}
+          {activeTab === 'defects' && (
+            <div className="space-y-4 animate-fade-in">
+              <DefectList
+                defects={defects}
+                selectedDefect={selectedDefect}
+                onSelectDefect={(d) => setSelectedDefect(d)}
+              />
+              <ProblemSolvedLog
+                defects={defects}
+                onStatusChange={handleStatusChange}
+              />
+            </div>
+          )}
+
+          {/* Tab 4: REPORTS */}
+          {activeTab === 'reports' && (
+            <div className="animate-fade-in">
+              <ReportsManager defects={defects} />
+            </div>
+          )}
+
+        </main>
+
+        {/* Inspection Detail Modal */}
+        {selectedDefect && (
+          <DefectDetailModal
+            defect={selectedDefect}
+            onClose={() => setSelectedDefect(null)}
+          />
         )}
 
-        {/* Tab 2: DRONE */}
-        {activeTab === 'drone' && (
-          <div className="animate-fade-in">
-            <DroneFleetServicing />
-          </div>
-        )}
-
-        {/* Tab 3: DEFECTS */}
-        {activeTab === 'defects' && (
-          <div className="space-y-4 animate-fade-in">
-            <DefectList
-              defects={defects}
-              selectedDefect={selectedDefect}
-              onSelectDefect={(d) => setSelectedDefect(d)}
-            />
-            <ProblemSolvedLog
-              defects={defects}
-              onStatusChange={handleStatusChange}
-            />
-          </div>
-        )}
-
-        {/* Tab 4: REPORTS */}
-        {activeTab === 'reports' && (
-          <div className="animate-fade-in">
-            <ReportsManager defects={defects} />
-          </div>
-        )}
-
-      </main>
-
-      {/* Inspection Detail Modal */}
-      {selectedDefect && (
-        <DefectDetailModal
-          defect={selectedDefect}
-          onClose={() => setSelectedDefect(null)}
+        {/* AirSim Drone Scan Upload Modal */}
+        <AirSimUploadModal
+          isOpen={isScanModalOpen}
+          onClose={() => setIsScanModalOpen(false)}
+          onScanComplete={handleScanComplete}
         />
-      )}
-
-      {/* AirSim Drone Scan Upload Modal */}
-      <AirSimUploadModal
-        isOpen={isScanModalOpen}
-        onClose={() => setIsScanModalOpen(false)}
-        onScanComplete={handleScanComplete}
-      />
-    </div>
+      </div>
+    </HeartPopEffect>
   );
 };
 
 export default App;
+
 

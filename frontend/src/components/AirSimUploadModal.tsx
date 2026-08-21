@@ -41,8 +41,8 @@ export const AirSimUploadModal: React.FC<AirSimUploadModalProps> = ({ isOpen, on
           assetName,
           assetType,
           locationName,
-          lat: 18.5679,
-          lng: 73.9143,
+          lat: 18.1234,
+          lng: 73.5678,
           altitude: 30.0,
           inspectorName: "Autonomous AirSim Drone SkyGuardian-X1"
         })
@@ -65,22 +65,22 @@ export const AirSimUploadModal: React.FC<AirSimUploadModalProps> = ({ isOpen, on
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#08111A]/85 backdrop-blur-md animate-fade-in font-sans">
-      <div className="relative w-full max-w-lg glass-panel-cyan rounded-2xl overflow-hidden border border-[#16B9E8]/30 p-5 space-y-4 hud-border shadow-2xl bg-[#101C28]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#831843]/40 backdrop-blur-md animate-fade-in font-sans">
+      <div className="relative w-full max-w-lg glass-panel-cyan rounded-2xl overflow-hidden border border-[#E11D48]/30 p-5 space-y-4 hud-border shadow-2xl bg-[#FFFFFF]">
         
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-[#152535] pb-3">
+        <div className="flex items-center justify-between border-b border-[#FBCFE8] pb-3">
           <div className="flex items-center space-x-2.5">
-            <div className="w-8 h-8 rounded-lg bg-[#16B9E8]/10 border border-[#16B9E8]/30 flex items-center justify-center text-[#16B9E8]">
+            <div className="w-8 h-8 rounded-xl bg-[#FFF1F2] border border-[#F43F5E]/30 flex items-center justify-center text-[#E11D48]">
               <Plane className="w-4 h-4 transform -rotate-45" />
             </div>
             <div>
-              <h3 className="text-sm font-extrabold text-[#F1F5F9] font-mono uppercase tracking-wider">AirSim Road Inspection</h3>
-              <p className="text-[11px] text-[#94A3B8]">Autonomous AI Road Volumetric Scan Pipeline</p>
+              <h3 className="text-sm font-extrabold text-[#831843] font-mono uppercase tracking-wider flex items-center gap-1">AirSim Road Inspection 🧸</h3>
+              <p className="text-[11px] text-[#9D174D]">Autonomous AI Road Volumetric Scan Pipeline</p>
             </div>
           </div>
           
-          <button onClick={onClose} className="p-1.5 rounded-lg bg-[#152535] text-[#94A3B8] hover:text-[#F1F5F9] border border-[#152535]">
+          <button onClick={onClose} className="p-1.5 rounded-lg bg-[#FDF2F8] text-[#9D174D] hover:text-[#831843] border border-[#FBCFE8]">
             <X className="w-4 h-4" />
           </button>
         </div>
@@ -91,8 +91,8 @@ export const AirSimUploadModal: React.FC<AirSimUploadModalProps> = ({ isOpen, on
             
             {/* Target Asset Type */}
             <div>
-              <label className="block text-[11px] font-bold text-[#F1F5F9] uppercase tracking-wider mb-1.5">
-                1. SELECT ASSET CLASS
+              <label className="block text-[11px] font-bold text-[#831843] uppercase tracking-wider mb-1.5">
+                1. SELECT ASSET CLASS 💕
               </label>
               <div className="grid grid-cols-2 gap-2">
                 {[
@@ -102,14 +102,14 @@ export const AirSimUploadModal: React.FC<AirSimUploadModalProps> = ({ isOpen, on
                   <button
                     key={item.id}
                     onClick={() => setAssetType(item.id as any)}
-                    className={`p-2.5 rounded-lg border text-left transition-all ${
+                    className={`p-2.5 rounded-xl border text-left transition-all ${
                       assetType === item.id
-                        ? 'bg-[#152535] border-[#16B9E8] text-[#F1F5F9] font-bold'
-                        : 'bg-[#08111A] border-[#152535] text-[#94A3B8] hover:bg-[#152535]/60'
+                        ? 'bg-[#FFF1F2] border-[#E11D48] text-[#831843] font-extrabold shadow-xs'
+                        : 'bg-[#FDF2F8] border-[#FBCFE8] text-[#9D174D] hover:bg-[#FCE7F3]'
                     }`}
                   >
-                    <p className="text-xs font-bold text-[#F1F5F9]">{item.label}</p>
-                    <p className="text-[10px] text-[#94A3B8] mt-0.5">{item.desc}</p>
+                    <p className="text-xs font-bold text-[#831843]">{item.label}</p>
+                    <p className="text-[10px] text-[#9D174D] mt-0.5">{item.desc}</p>
                   </button>
                 ))}
               </div>
@@ -118,26 +118,26 @@ export const AirSimUploadModal: React.FC<AirSimUploadModalProps> = ({ isOpen, on
             {/* Inputs */}
             <div className="space-y-2.5">
               <div>
-                <label className="block text-[11px] font-bold text-[#F1F5F9] uppercase tracking-wider mb-1">
+                <label className="block text-[11px] font-bold text-[#831843] uppercase tracking-wider mb-1">
                   2. INFRASTRUCTURE TARGET NAME
                 </label>
                 <input
                   type="text"
                   value={assetName}
                   onChange={(e) => setAssetName(e.target.value)}
-                  className="w-full bg-[#08111A] border border-[#152535] rounded-lg px-3 py-1.5 text-xs text-[#F1F5F9] focus:outline-none focus:border-[#16B9E8] font-mono"
+                  className="w-full bg-[#FDF2F8] border border-[#FBCFE8] rounded-xl px-3 py-2 text-xs text-[#831843] font-bold focus:outline-none focus:border-[#E11D48] font-mono"
                 />
               </div>
 
               <div>
-                <label className="block text-[11px] font-bold text-[#F1F5F9] uppercase tracking-wider mb-1">
+                <label className="block text-[11px] font-bold text-[#831843] uppercase tracking-wider mb-1">
                   3. GEO-LOCATION CITY/STATE
                 </label>
                 <input
                   type="text"
                   value={locationName}
                   onChange={(e) => setLocationName(e.target.value)}
-                  className="w-full bg-[#08111A] border border-[#152535] rounded-lg px-3 py-1.5 text-xs text-[#F1F5F9] focus:outline-none focus:border-[#16B9E8] font-mono"
+                  className="w-full bg-[#FDF2F8] border border-[#FBCFE8] rounded-xl px-3 py-2 text-xs text-[#831843] font-bold focus:outline-none focus:border-[#E11D48] font-mono"
                 />
               </div>
             </div>
@@ -145,10 +145,10 @@ export const AirSimUploadModal: React.FC<AirSimUploadModalProps> = ({ isOpen, on
             {/* Launch Button */}
             <button
               onClick={handleLaunchScan}
-              className="w-full py-2.5 bg-[#16B9E8] hover:bg-[#38CBF3] text-[#08111A] font-extrabold text-xs rounded-lg shadow-sm transition-all flex items-center justify-center space-x-2 mt-2 uppercase tracking-wider"
+              className="w-full py-2.5 bg-[#E11D48] hover:bg-[#BE123C] text-white font-extrabold text-xs rounded-xl shadow-xs transition-all flex items-center justify-center space-x-2 mt-2 uppercase tracking-wider active:scale-95"
             >
-              <Play className="w-4 h-4 fill-[#08111A]" />
-              <span>EXECUTE AIRSIM SCAN MISSION</span>
+              <Play className="w-4 h-4 fill-white text-white" />
+              <span>EXECUTE AIRSIM SCAN MISSION 💕</span>
             </button>
 
           </div>
@@ -156,13 +156,13 @@ export const AirSimUploadModal: React.FC<AirSimUploadModalProps> = ({ isOpen, on
           /* Scanning Progress View */
           <div className="py-8 flex flex-col items-center justify-center text-center space-y-3 font-mono">
             <div className="relative">
-              <div className="w-12 h-12 rounded-full border-2 border-[#16B9E8]/20 border-t-[#16B9E8] animate-spin" />
-              <Cpu className="w-5 h-5 text-[#16B9E8] absolute inset-0 m-auto" />
+              <div className="w-12 h-12 rounded-full border-2 border-[#E11D48]/20 border-t-[#E11D48] animate-spin" />
+              <Cpu className="w-5 h-5 text-[#E11D48] absolute inset-0 m-auto" />
             </div>
 
             <div>
-              <h4 className="text-xs font-bold text-[#F1F5F9] uppercase tracking-wider">AIRSIM AI ROAD SCANNER ACTIVE</h4>
-              <p className="text-[11px] text-[#16B9E8] mt-1">{stepText}</p>
+              <h4 className="text-xs font-bold text-[#831843] uppercase tracking-wider">AIRSIM AI ROAD SCANNER ACTIVE 🧸</h4>
+              <p className="text-[11px] text-[#E11D48] font-bold mt-1">{stepText}</p>
             </div>
           </div>
         )}

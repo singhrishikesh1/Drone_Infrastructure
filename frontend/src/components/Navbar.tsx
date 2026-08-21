@@ -27,35 +27,36 @@ export const Navbar: React.FC<NavbarProps> = ({
   }, []);
 
   return (
-    <header className="sticky top-0 z-40 bg-[#08111A] border-b border-[#152535] px-4 md:px-6 py-2.5 flex flex-col md:flex-row items-center justify-between gap-3 shadow-md">
+    <header className="sticky top-0 z-40 bg-[#FDF2F8] border-b border-[#FBCFE8] px-4 md:px-6 py-2.5 flex flex-col md:flex-row items-center justify-between gap-3 shadow-sm">
       {/* Brand & Logo - DRONACHARYA */}
       <div className="flex items-center space-x-3">
-        <div className="w-8 h-8 rounded-lg bg-[#101C28] border border-[#16B9E8]/30 p-0.5 flex items-center justify-center">
-          <Plane className="w-4 h-4 text-[#16B9E8] transform -rotate-45" />
+        <div className="w-8 h-8 rounded-lg bg-[#FFFFFF] border border-[#F472B6] p-0.5 flex items-center justify-center shadow-xs">
+          <Plane className="w-4 h-4 text-[#E11D48] transform -rotate-45" />
         </div>
         <div>
           <div className="flex items-center space-x-2">
-            <h1 className="font-['Inter'] font-extrabold text-base text-[#F1F5F9] tracking-wider flex items-center gap-2">
+            <h1 className="font-['Inter'] font-extrabold text-base text-[#831843] tracking-wider flex items-center gap-1.5">
               DRONACHARYA
-              <span className="text-[9px] px-2 py-0.5 bg-[#16B9E8]/10 text-[#16B9E8] border border-[#16B9E8]/20 rounded font-mono font-medium">
+              <span className="text-sm">🧸</span>
+              <span className="text-[9px] px-2 py-0.5 bg-[#FFF1F2] text-[#E11D48] border border-[#F43F5E]/30 rounded font-mono font-bold">
                 ROAD DETECTION AI
               </span>
             </h1>
           </div>
-          <div className="flex items-center space-x-2.5 text-[10px] text-[#94A3B8] font-mono mt-0.5">
-            <span className="text-[#22C55E] font-medium flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#22C55E] animate-pulse" /> SYSTEM ONLINE
+          <div className="flex items-center space-x-2.5 text-[10px] text-[#9D174D] font-mono mt-0.5">
+            <span className="text-[#16A34A] font-bold flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#16A34A] animate-pulse" /> SYSTEM ONLINE 💕
             </span>
             <span>•</span>
-            <span className="text-[#94A3B8] flex items-center gap-1 font-mono">
-              <Clock className="w-3 h-3 text-[#16B9E8]" /> {timeString || '16:13:53 IST'}
+            <span className="text-[#9D174D] flex items-center gap-1 font-mono">
+              <Clock className="w-3 h-3 text-[#E11D48]" /> {timeString || '16:32:00 IST'}
             </span>
           </div>
         </div>
       </div>
 
-      {/* Navigation Tabs (Image 1 Specs) */}
-      <div className="flex items-center space-x-1 bg-[#101C28] p-1 rounded-lg border border-[#152535] text-xs overflow-x-auto w-full md:w-auto font-sans">
+      {/* Navigation Tabs */}
+      <div className="flex items-center space-x-1 bg-[#FFFFFF] p-1 rounded-xl border border-[#FBCFE8] text-xs overflow-x-auto w-full md:w-auto font-sans shadow-xs">
         {[
           { id: 'telemetry', label: 'LIVE TELEMETRY', icon: Navigation },
           { id: 'drone', label: 'DRONE', icon: Plane },
@@ -68,13 +69,13 @@ export const Navbar: React.FC<NavbarProps> = ({
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
-              className={`flex items-center space-x-1.5 px-3.5 py-1.5 rounded-md font-bold transition-all text-xs whitespace-nowrap ${
+              className={`flex items-center space-x-1.5 px-3.5 py-1.5 rounded-lg font-extrabold transition-all text-xs whitespace-nowrap ${
                 isActive
-                  ? 'bg-[#16B9E8] text-[#08111A] shadow-sm'
-                  : 'text-[#94A3B8] hover:text-[#F1F5F9] hover:bg-[#152535]'
+                  ? 'bg-[#E11D48] text-white shadow-sm'
+                  : 'text-[#9D174D] hover:text-[#831843] hover:bg-[#FCE7F3]'
               }`}
             >
-              <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-[#08111A]' : 'text-[#94A3B8]'}`} />
+              <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-white' : 'text-[#E11D48]'}`} />
               <span>{tab.label}</span>
             </button>
           );
@@ -84,17 +85,17 @@ export const Navbar: React.FC<NavbarProps> = ({
       {/* Actions */}
       <div className="flex items-center space-x-3">
         {criticalCount > 0 && (
-          <div className="hidden sm:flex items-center space-x-1.5 bg-[#EF4444]/10 text-[#EF4444] border border-[#EF4444]/30 px-2.5 py-1 rounded-md text-xs font-mono font-medium">
-            <ShieldAlert className="w-3.5 h-3.5 text-[#EF4444]" />
+          <div className="hidden sm:flex items-center space-x-1.5 bg-[#FFF1F2] text-[#E11D48] border border-[#F43F5E]/30 px-2.5 py-1 rounded-lg text-xs font-mono font-bold">
+            <ShieldAlert className="w-3.5 h-3.5 text-[#E11D48]" />
             <span>{criticalCount} CRITICAL DEFECTS</span>
           </div>
         )}
 
         <button
           onClick={onOpenScanModal}
-          className="flex items-center space-x-1.5 bg-[#16B9E8] hover:bg-[#38CBF3] text-[#08111A] font-extrabold text-xs px-3.5 py-1.5 rounded-md transition-all shadow-sm"
+          className="flex items-center space-x-1.5 bg-[#E11D48] hover:bg-[#BE123C] text-white font-extrabold text-xs px-4 py-1.5 rounded-lg transition-all shadow-md active:scale-95"
         >
-          <Cpu className="w-3.5 h-3.5 text-[#08111A]" />
+          <Cpu className="w-3.5 h-3.5 text-white" />
           <span>NEW DRONE SCAN</span>
         </button>
       </div>

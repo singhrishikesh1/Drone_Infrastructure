@@ -294,28 +294,27 @@ export const GoogleMapView: React.FC<MapViewProps> = ({
       }
     };
   }, []);
-
-  const filteredCount = defects.filter(d => {
+const filteredCount = defects.filter(d => {
     const matchAsset = activeAssetFilter === 'all' || d.assetType.toLowerCase() === activeAssetFilter.toLowerCase();
     const matchLoc = activeLocationFilter === 'all' || d.locationName.toLowerCase().includes(activeLocationFilter.toLowerCase());
     return matchAsset && matchLoc;
   }).length;
 
   return (
-    <div className="glass-panel rounded-xl p-3 border border-[#152535] bg-[#101C28] shadow-xl relative space-y-3 hud-border font-sans">
+    <div className="glass-panel rounded-2xl p-3 border border-[#FBCFE8] bg-[#FFFFFF] shadow-xs relative space-y-3 hud-border font-sans">
       {/* Header Controls Bar */}
       <div className="flex flex-col space-y-2.5">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5">
           <div className="flex items-center space-x-2">
-            <div className="w-7 h-7 rounded-lg bg-[#16B9E8]/10 border border-[#16B9E8]/30 flex items-center justify-center">
-              <Navigation className="w-3.5 h-3.5 text-[#16B9E8]" />
+            <div className="w-7 h-7 rounded-lg bg-[#FFF1F2] border border-[#F43F5E]/30 flex items-center justify-center">
+              <Navigation className="w-3.5 h-3.5 text-[#E11D48]" />
             </div>
             <div>
-              <h2 className="text-sm font-bold text-[#F1F5F9] uppercase tracking-wider font-mono flex items-center gap-2">
-                DRONACHARYA ROAD PATROL GIS RADAR
-                <span className="text-[9px] px-2 py-0.5 rounded bg-[#22C55E]/10 text-[#22C55E] border border-[#22C55E]/30 font-mono font-bold flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#22C55E] animate-pulse" />
-                  1 ACTIVE DRONE PATROLLING ROADS
+              <h2 className="text-sm font-extrabold text-[#831843] uppercase tracking-wider font-mono flex items-center gap-2">
+                DRONACHARYA ROAD PATROL GIS RADAR 🧸
+                <span className="text-[9px] px-2 py-0.5 rounded-md bg-[#DCFCE7] text-[#16A34A] border border-[#16A34A]/30 font-mono font-bold flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#16A34A] animate-pulse" />
+                  1 DRONE PATROLLING 💕
                 </span>
               </h2>
             </div>
@@ -325,9 +324,9 @@ export const GoogleMapView: React.FC<MapViewProps> = ({
           <div className="flex items-center space-x-1.5 overflow-x-auto w-full sm:w-auto font-mono text-[11px]">
             <button
               onClick={() => setShowApiKeyModal(true)}
-              className="flex items-center space-x-1 px-2.5 py-1 rounded bg-[#152535] text-[#16B9E8] border border-[#16B9E8]/30 font-bold hover:bg-[#16B9E8]/10 transition-all"
+              className="flex items-center space-x-1 px-3 py-1 rounded-lg bg-[#E11D48] text-white font-extrabold hover:bg-[#BE123C] transition-all shadow-xs"
             >
-              <Key className="w-3 h-3 text-[#16B9E8]" />
+              <Key className="w-3 h-3 text-white" />
               <span>{googleApiKey ? 'GOOGLE MAPS API SET' : 'ADD MAPS API KEY'}</span>
             </button>
 
@@ -340,10 +339,10 @@ export const GoogleMapView: React.FC<MapViewProps> = ({
               <button
                 key={loc.id}
                 onClick={() => setActiveLocationFilter(loc.id)}
-                className={`px-2.5 py-1 rounded transition-all ${
+                className={`px-2.5 py-1 rounded-lg font-bold transition-all ${
                   activeLocationFilter === loc.id
-                    ? 'bg-[#16B9E8] text-[#08111A] font-bold shadow-md'
-                    : 'bg-[#08111A] text-[#94A3B8] hover:text-[#F1F5F9] border border-[#152535]'
+                    ? 'bg-[#E11D48] text-white shadow-xs'
+                    : 'bg-[#FDF2F8] text-[#9D174D] hover:text-[#831843] border border-[#FBCFE8]'
                 }`}
               >
                 {loc.label}
@@ -353,16 +352,16 @@ export const GoogleMapView: React.FC<MapViewProps> = ({
         </div>
 
         {/* Status Bar */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 bg-[#08111A] p-2 rounded-lg border border-[#152535] text-[11px] font-mono">
-          <div className="flex items-center space-x-2 text-[#94A3B8]">
-            <span className="text-[#16B9E8] font-bold flex items-center gap-1">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 bg-[#FDF2F8] p-2 rounded-xl border border-[#FBCFE8] text-[11px] font-mono">
+          <div className="flex items-center space-x-2 text-[#9D174D]">
+            <span className="text-[#E11D48] font-extrabold flex items-center gap-1">
               🛣️ ROAD SNAPPED PATH:
             </span>
-            <span className="text-[#F1F5F9] font-bold">Pune Outer Ring Road → NH-48 Expressway</span>
+            <span className="text-[#831843] font-bold">Pune Outer Ring Road → NH-48 Expressway</span>
           </div>
 
           <div className="flex items-center space-x-1 overflow-x-auto">
-            <span className="text-[#64748B] font-semibold px-1">FILTER ASSET:</span>
+            <span className="text-[#BE185D] font-bold px-1">FILTER ASSET:</span>
             {[
               { id: 'all', label: 'All' },
               { id: 'road', label: '🛣️ Roads' },
@@ -371,10 +370,10 @@ export const GoogleMapView: React.FC<MapViewProps> = ({
               <button
                 key={asset.id}
                 onClick={() => setActiveAssetFilter(asset.id)}
-                className={`px-2 py-0.5 rounded font-medium transition-all whitespace-nowrap ${
+                className={`px-2.5 py-0.5 rounded-md font-bold transition-all whitespace-nowrap ${
                   activeAssetFilter === asset.id
-                    ? 'bg-[#152535] text-[#F1F5F9] border border-[#16B9E8]/40 font-bold'
-                    : 'text-[#94A3B8] hover:text-[#F1F5F9]'
+                    ? 'bg-[#E11D48] text-white shadow-xs'
+                    : 'text-[#9D174D] hover:text-[#831843]'
                 }`}
               >
                 {asset.label}
@@ -385,68 +384,52 @@ export const GoogleMapView: React.FC<MapViewProps> = ({
       </div>
 
       {/* Map Canvas */}
-      <div className="relative w-full h-[450px] rounded-lg overflow-hidden border border-[#152535] shadow-inner">
-        <div ref={containerRef} className="w-full h-full bg-[#08111A]" />
+      <div className="relative w-full h-[450px] rounded-xl overflow-hidden border border-[#FBCFE8] shadow-inner">
+        <div ref={containerRef} className="w-full h-full bg-[#FDF2F8]" />
 
-        {/* Floating Live Overlay */}
-        <div className="absolute top-3 left-3 z-[400] bg-[#101C28]/95 backdrop-blur-md border border-[#152535] p-2.5 rounded-lg text-xs space-y-1 shadow-lg max-w-xs font-mono">
-          <div className="flex items-center justify-between text-[#94A3B8] border-b border-[#152535] pb-1">
-            <span className="font-bold text-[#F1F5F9] text-[11px] flex items-center gap-1.5 uppercase">
-              <Navigation className="w-3.5 h-3.5 text-[#16B9E8]" /> ROAD PATROL RADAR
-            </span>
-            <span className="w-2 h-2 rounded-full bg-[#22C55E] animate-pulse" />
+        {/* Overlay Telemetry Tag */}
+        <div className="absolute top-3 left-3 z-[400] bg-[#FFFFFF]/90 backdrop-blur-md px-3 py-1.5 rounded-xl border border-[#FBCFE8] text-[11px] font-mono text-[#831843] space-y-0.5 shadow-xs">
+          <div className="font-extrabold flex items-center gap-1 text-[#E11D48]">
+            <span className="w-2 h-2 rounded-full bg-[#16A34A] animate-pulse" /> SKYGUARDIAN-X1 ACTIVE 🧸
           </div>
-          <div className="grid grid-cols-2 gap-2 pt-1 text-[10px]">
-            <div>
-              <span className="text-[#64748B] block">ACTIVE DRONE</span>
-              <span className="text-[#16B9E8] font-bold">SkyGuardian-X1</span>
-            </div>
-            <div>
-              <span className="text-[#64748B] block">DEFECTS DETECTED</span>
-              <span className="text-[#F59E0B] font-bold">{filteredCount} Markers</span>
-            </div>
+          <div className="text-[10px] text-[#9D174D] font-bold">
+            LAT: 18.5679° N | LNG: 73.9143° E | ALT: 48.5m
           </div>
         </div>
 
-        {/* Legend Overlay */}
-        <div className="absolute bottom-3 right-3 z-[400] bg-[#101C28]/95 backdrop-blur-md border border-[#152535] px-3 py-1.5 rounded-lg text-[10px] font-mono flex items-center space-x-3 shadow-lg">
-          <div className="flex items-center space-x-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#EF4444]" />
-            <span className="text-[#F1F5F9] font-bold">Critical</span>
-          </div>
-          <div className="flex items-center space-x-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#F59E0B]" />
-            <span className="text-[#94A3B8]">Warning</span>
-          </div>
-          <div className="flex items-center space-x-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#22C55E]" />
-            <span className="text-[#94A3B8]">Resolved</span>
-          </div>
+        {/* Legend */}
+        <div className="absolute bottom-3 left-3 z-[400] bg-[#FFFFFF]/90 backdrop-blur-md px-3 py-1.5 rounded-xl border border-[#FBCFE8] text-[10px] font-mono flex items-center space-x-3 text-[#831843] shadow-xs">
+          <span className="flex items-center gap-1 font-bold"><span className="w-2 h-2 rounded-full bg-[#E11D48]" /> Critical Crack</span>
+          <span className="flex items-center gap-1 font-bold"><span className="w-2 h-2 rounded-full bg-[#D97706]" /> Warning Damage</span>
+          <span className="flex items-center gap-1 font-bold"><span className="w-2 h-2 rounded-full bg-[#16A34A]" /> Resolved Pothole</span>
+          <span className="flex items-center gap-1 font-bold text-[#E11D48]">⚡ Road Flight Corridor</span>
         </div>
       </div>
 
       {/* Google Maps API Key Modal */}
       {showApiKeyModal && (
-        <div className="fixed inset-0 z-50 bg-[#08111A]/85 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="glass-panel p-5 rounded-xl border border-[#16B9E8]/30 bg-[#101C28] max-w-md w-full space-y-4 shadow-2xl font-mono text-xs">
-            <div className="flex items-center justify-between border-b border-[#152535] pb-2">
-              <h3 className="text-sm font-extrabold text-[#F1F5F9] uppercase tracking-wider flex items-center gap-2">
-                <Key className="w-4 h-4 text-[#16B9E8]" />
-                GOOGLE MAPS API KEY FOR ROAD DETECTION
+        <div className="fixed inset-0 z-50 bg-[#831843]/40 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="glass-panel p-5 rounded-2xl border border-[#E11D48]/30 bg-[#FFFFFF] max-w-md w-full space-y-4 shadow-2xl font-sans">
+            <div className="flex items-center justify-between border-b border-[#FBCFE8] pb-3">
+              <h3 className="text-sm font-extrabold text-[#831843] uppercase tracking-wider flex items-center gap-2 font-mono">
+                <Key className="w-4 h-4 text-[#E11D48]" />
+                SET GOOGLE MAPS API KEY 🧸
               </h3>
+              <button onClick={() => setShowApiKeyModal(false)} className="text-[#9D174D] hover:text-[#831843] font-bold">✕</button>
             </div>
 
-            <div className="space-y-3">
-              <p className="text-[11px] text-[#94A3B8] leading-relaxed">
-                Add your Google Maps API Key to enable official Google Road Detection & Snap-to-Road Services for <strong className="text-[#16B9E8]">SkyGuardian-X1</strong>.
+            <div className="space-y-3 text-xs font-mono">
+              <p className="text-[#9D174D]">
+                Enter your Google Maps JavaScript API key to enable high-resolution satellite road tile overlays & dynamic road network snapping.
               </p>
+
               <div>
-                <label className="block text-[#94A3B8] mb-1 font-bold">GOOGLE MAPS API KEY</label>
+                <label className="block text-[#831843] mb-1 font-bold">API KEY</label>
                 <input
                   type="text"
                   value={googleApiKey}
                   onChange={(e) => setGoogleApiKey(e.target.value)}
-                  className="w-full p-2.5 rounded-lg bg-[#08111A] border border-[#152535] text-[#F1F5F9] focus:outline-none focus:border-[#16B9E8]"
+                  className="w-full p-2.5 rounded-xl bg-[#FDF2F8] border border-[#FBCFE8] text-[#831843] focus:outline-none focus:border-[#E11D48] font-mono text-xs font-bold"
                   placeholder="AIzaSy..."
                 />
               </div>
@@ -455,16 +438,16 @@ export const GoogleMapView: React.FC<MapViewProps> = ({
                 <button
                   type="button"
                   onClick={() => setShowApiKeyModal(false)}
-                  className="px-3.5 py-1.5 rounded-lg bg-[#08111A] text-[#94A3B8] hover:text-[#F1F5F9] font-bold border border-[#152535]"
+                  className="px-3.5 py-1.5 rounded-lg bg-[#FDF2F8] text-[#9D174D] hover:text-[#831843] font-bold border border-[#FBCFE8]"
                 >
-                  CLOSE
+                  CANCEL
                 </button>
                 <button
                   type="button"
                   onClick={() => setShowApiKeyModal(false)}
-                  className="px-4 py-1.5 rounded-lg bg-[#16B9E8] hover:bg-[#38CBF3] text-[#08111A] font-extrabold"
+                  className="px-4 py-1.5 rounded-lg bg-[#E11D48] hover:bg-[#BE123C] text-white font-extrabold shadow-sm active:scale-95"
                 >
-                  SAVE & RELOAD MAP
+                  SAVE & ACTIVATE MAPS 💕
                 </button>
               </div>
             </div>
@@ -474,4 +457,3 @@ export const GoogleMapView: React.FC<MapViewProps> = ({
     </div>
   );
 };
-

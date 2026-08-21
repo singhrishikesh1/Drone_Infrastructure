@@ -4,20 +4,20 @@
 
 @layer utilities {
   .glass-panel {
-    background: #101C28;
-    border: 1px solid #152535;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    background: #FFFFFF;
+    border: 1px solid #FBCFE8;
+    box-shadow: 0 4px 20px rgba(225, 29, 72, 0.08);
   }
   
   .glass-panel-cyan {
-    background: #101C28;
-    border: 1px solid rgba(22, 185, 232, 0.3);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    background: #FFF1F2;
+    border: 1px solid #F43F5E;
+    box-shadow: 0 4px 20px rgba(225, 29, 72, 0.12);
   }
 
   .hud-border {
     position: relative;
-    border: 1px solid #152535;
+    border: 1px solid #FBCFE8;
   }
   .hud-border::before {
     content: '';
@@ -26,8 +26,8 @@
     left: 0;
     width: 6px;
     height: 6px;
-    border-top: 1.5px solid #16B9E8;
-    border-left: 1.5px solid #16B9E8;
+    border-top: 2px solid #E11D48;
+    border-left: 2px solid #E11D48;
   }
   .hud-border::after {
     content: '';
@@ -36,29 +36,52 @@
     right: 0;
     width: 6px;
     height: 6px;
-    border-bottom: 1.5px solid #16B9E8;
-    border-right: 1.5px solid #16B9E8;
+    border-bottom: 2px solid #E11D48;
+    border-right: 2px solid #E11D48;
   }
 }
 
-/* Tactical Scrollbar */
+@keyframes floatHeart {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(0.6) translateY(0);
+  }
+  50% {
+    opacity: 0.9;
+    transform: translate(-50%, -50%) scale(1.2) translateY(-30px);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1.5) translateY(-60px);
+  }
+}
+
+.animate-heart-pop {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  font-size: 20px;
+  animation: floatHeart 0.8s ease-out forwards;
+}
+
+/* Tactical Pink Scrollbar */
 ::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #08111A;
+  background: #FDF2F8;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #152535;
-  border-radius: 2px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: #FBCFE8;
+  border-radius: 3px;
+  border: 1px solid #F472B6;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #16B9E8;
+  background: #E11D48;
 }
 
 /* Leaflet Map Pin Adjustments */
