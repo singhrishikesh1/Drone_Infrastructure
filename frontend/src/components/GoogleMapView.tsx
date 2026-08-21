@@ -24,26 +24,26 @@ interface SingleDroneUnit {
 }
 
 // Single active drone SkyGuardian-X1 following exact road network polylines (Pune Road Network)
+const POINT_A_COORDS: [number, number] = [18.5679, 73.9143]; // Point A: Viman Nagar Depot
+const POINT_B_COORDS: [number, number] = [18.5808, 73.9818]; // Point B: Wagholi Highway Junction
+
 const ACTIVE_DRONE: SingleDroneUnit = {
   id: 'DRONE-PUNE-01',
   callsign: 'SkyGuardian-X1',
   name: 'SkyGuardian-X1 Autonomous Patrol',
   model: 'Matrice 300 RTK Industrial',
-  status: 'AUTONOMOUS PATROL',
+  status: 'PATROLLING POINT A ➔ POINT B ON ROAD NETWORK',
   battery: 88,
   speedKmH: 24.2,
   altitude: 48.5,
-  sector: 'Pune Outer Ring Road - Sector 04',
-  color: '#16B9E8', // Cyan primary accent
-  // Exact road coordinates snapped to Pune road network
+  sector: 'Pune Outer Ring Road (Point A ➔ Point B)',
+  color: '#E11D48',
   roadCorridor: [
-    [18.5679, 73.9143], // Viman Nagar Airport Road
+    [18.5679, 73.9143], // Point A: Viman Nagar Airport Road
     [18.5600, 73.9250], // Airport Connector Rd
     [18.5515, 73.9348], // Kharadi Main Road / EON Bridge
     [18.5620, 73.9550], // IT Corridor Bypass
-    [18.5808, 73.9818], // Wagholi Highway Stretch (NH-48)
-    [18.5680, 73.9450], // Nagar Road Return
-    [18.5679, 73.9143]  // Road Loop Back
+    [18.5808, 73.9818]  // Point B: Wagholi Highway Stretch (NH-48)
   ]
 };
 
@@ -56,6 +56,8 @@ export const GoogleMapView: React.FC<MapViewProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const droneMarkerRef = useRef<L.Marker | null>(null);
   const roadPolylineRef = useRef<L.Polyline | null>(null);
+  const pointAMarkerRef = useRef<L.Marker | null>(null);
+  const pointBMarkerRef = useRef<L.Marker | null>(null);
   const animFrameRef = useRef<number | null>(null);
 
   const [activeAssetFilter, setActiveAssetFilter] = useState<string>('all');
@@ -64,6 +66,11 @@ export const GoogleMapView: React.FC<MapViewProps> = ({
     (import.meta as any).env?.VITE_GOOGLE_MAPS_API_KEY || ''
   );
   const [showApiKeyModal, setShowApiKeyModal] = useState<boolean>(false);
+  
+  // Navigation State
+  const [direction, setDirection] = useState<'forward' | 'reverse'>('forward');
+  const [routeProgressPct, setRouteProgressPct] = useState<number>(0);
+  const [currentLegText, setCurrentLegText] = useState<string>('Moving from Point A ➔ Point B');
 
   // Initialize Map
   useEffect(() => {
@@ -73,7 +80,7 @@ export const GoogleMapView: React.FC<MapViewProps> = ({
     const map = L.map(containerRef.current, {
       zoomControl: false,
       attributionControl: false
-    }).setView([18.5520, 73.9400], 13);
+    }).setView([18.5650, 73.9450], 13);
 
     // CartoDB Voyager Light tiles
     L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
@@ -83,6 +90,33 @@ export const GoogleMapView: React.FC<MapViewProps> = ({
 
     L.control.zoom({ position: 'bottomright' }).addTo(map);
     mapRef.current = map;
+
+    // Render Point A Icon (Green Start Flag)
+    const pointAIcon = L.divIcon({
+      className: 'point-a-pin',
+      html: `
+        <div style="background: #16A34A; color: #FFFFFF; font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 800; padding: 4px 8px; border-radius: 8px; border: 2px solid #FFFFFF; box-shadow: 0 4px 12px rgba(22,163,74,0.4); display: flex; align-items: center; gap: 4px; white-space: nowrap;">
+          📍 POINT A (Depot)
+        </div>
+      `,
+      iconSize: [120, 30],
+      iconAnchor: [60, 15]
+    });
+    pointAMarkerRef.current = L.marker(POINT_A_COORDS, { icon: pointAIcon }).addTo(map);
+
+    // Render Point B Icon (Red Target Flag)
+    const pointBIcon = L.divIcon({
+      className: 'point-b-pin',
+      html: `
+        <div style="background: #E11D48; color: #FFFFFF; font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 800; padding: 4px 8px; border-radius: 8px; border: 2px solid #FFFFFF; box-shadow: 0 4px 12px rgba(225,29,72,0.4); display: flex; align-items: center; gap: 4px; white-space: nowrap;">
+          🏁 POINT B (Target)
+        </div>
+      `,
+      iconSize: [120, 30],
+      iconAnchor: [60, 15]
+    });
+    pointBMarkerRef.current = L.marker(POINT_B_COORDS, { icon: pointBIcon }).addTo(map);
+
   }, []);
 
   // Update Defect Markers on Map
@@ -92,7 +126,7 @@ export const GoogleMapView: React.FC<MapViewProps> = ({
 
     // Remove existing defect markers
     map.eachLayer((layer) => {
-      if (layer instanceof L.Marker && !(layer as any).isDroneMarker) {
+      if (layer instanceof L.Marker && !(layer as any).isDroneMarker && layer !== pointAMarkerRef.current && layer !== pointBMarkerRef.current) {
         map.removeLayer(layer);
       }
     });
@@ -129,7 +163,7 @@ export const GoogleMapView: React.FC<MapViewProps> = ({
     }
   }, [defects, selectedDefect, activeAssetFilter, activeLocationFilter]);
 
-  // Render Red/Pink Road Patrol Corridor
+  // Render Red/Pink Road Patrol Corridor strictly along roads
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
@@ -140,15 +174,15 @@ export const GoogleMapView: React.FC<MapViewProps> = ({
 
     const polyline = L.polyline(ACTIVE_DRONE.roadCorridor, {
       color: '#E11D48',
-      weight: 3.5,
-      dashArray: '6, 8',
-      opacity: 0.9
+      weight: 4,
+      dashArray: '8, 10',
+      opacity: 0.95
     }).addTo(map);
 
     roadPolylineRef.current = polyline;
   }, []);
 
-  // Single Drone Road Navigation Animation Engine
+  // Point A to Point B Road Navigation Loop Engine
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
@@ -157,24 +191,28 @@ export const GoogleMapView: React.FC<MapViewProps> = ({
       map.removeLayer(droneMarkerRef.current);
     }
 
-    let segmentIndex = 0;
-    let progress = 0;
-    const speed = 0.0015;
+    const waypoints = ACTIVE_DRONE.roadCorridor;
+    const numSegments = waypoints.length - 1;
 
-    const createDroneIconHtml = (headingAngle: number) => {
+    let isMovingForward = true;
+    let currentSegment = 0;
+    let segmentProgress = 0;
+    const stepSpeed = 0.003; // Smooth travel speed along road segments
+
+    const createDroneIconHtml = (headingAngle: number, currentLeg: string) => {
       return `
-        <div style="position: relative; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;">
-          <!-- Radar Aura -->
-          <div style="position: absolute; width: 36px; height: 36px; border-radius: 50%; border: 1.5px solid #E11D48; opacity: 0.3;"></div>
+        <div style="position: relative; width: 64px; height: 64px; display: flex; align-items: center; justify-content: center;">
+          <!-- Radar Pulse -->
+          <div style="position: absolute; width: 40px; height: 40px; border-radius: 50%; border: 2px solid #E11D48; opacity: 0.35; animation: ping 1.5s infinite;"></div>
 
           <!-- Quadcopter Body -->
-          <div style="transform: rotate(${headingAngle.toFixed(1)}deg); position: relative; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">
+          <div style="transform: rotate(${headingAngle.toFixed(1)}deg); position: relative; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center;">
             <div class="animate-spin-fast" style="position: absolute; top: 0; left: 0; width: 8px; height: 8px; border-radius: 50%; border: 1.5px solid #E11D48;"></div>
             <div class="animate-spin-fast" style="position: absolute; top: 0; right: 0; width: 8px; height: 8px; border-radius: 50%; border: 1.5px solid #E11D48;"></div>
             <div class="animate-spin-fast" style="position: absolute; bottom: 0; left: 0; width: 8px; height: 8px; border-radius: 50%; border: 1.5px solid #E11D48;"></div>
             <div class="animate-spin-fast" style="position: absolute; bottom: 0; right: 0; width: 8px; height: 8px; border-radius: 50%; border: 1.5px solid #E11D48;"></div>
 
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#E11D48" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#E11D48" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
               <line x1="4" y1="4" x2="20" y2="20" stroke-opacity="0.6"/>
               <line x1="20" y1="4" x2="4" y2="20" stroke-opacity="0.6"/>
               <circle cx="12" cy="12" r="4" fill="#FFFFFF" stroke="#E11D48" stroke-width="2"/>
@@ -183,87 +221,94 @@ export const GoogleMapView: React.FC<MapViewProps> = ({
           </div>
 
           <!-- Callsign Tag Badge -->
-          <div style="position: absolute; top: -14px; white-space: nowrap; background: #FFFFFF; border: 1px solid #E11D48; color: #831843; font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 800; padding: 1px 6px; border-radius: 4px; display: flex; align-items: center; gap: 4px; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">
+          <div style="position: absolute; top: -16px; white-space: nowrap; background: #FFFFFF; border: 1.5px solid #E11D48; color: #831843; font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 800; padding: 1px 7px; border-radius: 6px; display: flex; align-items: center; gap: 4px; box-shadow: 0 4px 12px rgba(225,29,72,0.25);">
             <span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background-color: #16A34A;"></span>
-            ${ACTIVE_DRONE.callsign} 🧸
+            ${ACTIVE_DRONE.callsign} (${currentLeg}) 🧸
           </div>
         </div>
       `;
     };
 
-    const p1 = ACTIVE_DRONE.roadCorridor[0];
-    const p2 = ACTIVE_DRONE.roadCorridor[1];
-    const initialLat = p1[0];
-    const initialLng = p1[1];
+    const initialLat = waypoints[0][0];
+    const initialLng = waypoints[0][1];
 
     const icon = L.divIcon({
       className: 'moving-drone-pin',
-      html: createDroneIconHtml(0),
-      iconSize: [60, 60],
-      iconAnchor: [30, 30]
+      html: createDroneIconHtml(0, 'A ➔ B'),
+      iconSize: [64, 64],
+      iconAnchor: [32, 32]
     });
 
     const marker = L.marker([initialLat, initialLng], { icon }).addTo(map);
     (marker as any).isDroneMarker = true;
-
-    const popupHtml = `
-      <div style="font-family: 'Inter', sans-serif; background: #FFFFFF; color: #831843; padding: 10px; border-radius: 12px; border: 1px solid #E11D48; max-width: 250px; box-shadow: 0 4px 16px rgba(225,29,72,0.15);">
-        <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 800; color: #E11D48; display: flex; align-items: center; justify-content: space-between;">
-          <span>🛸 ${ACTIVE_DRONE.callsign} 🧸</span>
-          <span style="color: #16A34A; background: #DCFCE7; padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(22,163,74,0.3); font-size: 8px;">SNAPPED TO ROAD 💕</span>
-        </div>
-        <div style="font-size: 12px; font-weight: 800; margin-top: 4px; color: #831843;">${ACTIVE_DRONE.name}</div>
-        <div style="font-size: 10px; color: #9D174D; margin-top: 1px;">Model: ${ACTIVE_DRONE.model}</div>
-
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 8px; font-family: 'JetBrains Mono', monospace; font-size: 10px; background: #FDF2F8; padding: 6px; border-radius: 6px; border: 1px solid #FBCFE8;">
-          <div><span style="color: #9D174D;">ALTITUDE:</span> <strong style="color: #E11D48;">${ACTIVE_DRONE.altitude}m</strong></div>
-          <div><span style="color: #9D174D;">SPEED:</span> <strong style="color: #831843;">${ACTIVE_DRONE.speedKmH} km/h</strong></div>
-          <div><span style="color: #9D174D;">BATTERY:</span> <strong style="color: #16A34A;">${ACTIVE_DRONE.battery}%</strong></div>
-          <div><span style="color: #9D174D;">STATUS:</span> <strong style="color: #E11D48;">PATROL</strong></div>
-        </div>
-
-        <div style="font-size: 10px; color: #9D174D; margin-top: 6px; font-family: 'JetBrains Mono', monospace;">
-          📍 Road Sector: <strong style="color: #831843;">${ACTIVE_DRONE.sector}</strong>
-        </div>
-      </div>
-    `;
-
-    marker.bindPopup(popupHtml);
     droneMarkerRef.current = marker;
 
-    // Animation loop along road network
-    const animate = () => {
-      progress += speed;
-      if (progress >= 1) {
-        progress = 0;
-        segmentIndex = (segmentIndex + 1) % (ACTIVE_DRONE.roadCorridor.length - 1);
+    // Road Animation Loop from Point A to Point B and Back
+    const animateRoadPatrol = () => {
+      segmentProgress += stepSpeed;
+
+      if (segmentProgress >= 1) {
+        segmentProgress = 0;
+        if (isMovingForward) {
+          currentSegment++;
+          if (currentSegment >= numSegments) {
+            // Reached Point B! Turn around and head back to Point A
+            isMovingForward = false;
+            currentSegment = numSegments - 1;
+            setDirection('reverse');
+            setCurrentLegText('Reached Point B! Returning B ➔ A');
+          }
+        } else {
+          currentSegment--;
+          if (currentSegment < 0) {
+            // Reached Point A! Start next mission to Point B
+            isMovingForward = true;
+            currentSegment = 0;
+            setDirection('forward');
+            setCurrentLegText('Reached Point A! Starting A ➔ B Patrol');
+          }
+        }
       }
 
-      const pointA = ACTIVE_DRONE.roadCorridor[segmentIndex];
-      const pointB = ACTIVE_DRONE.roadCorridor[segmentIndex + 1];
+      // Calculate exact coordinates along current road segment
+      const fromIdx = isMovingForward ? currentSegment : currentSegment + 1;
+      const toIdx = isMovingForward ? currentSegment + 1 : currentSegment;
 
-      const lat = pointA[0] + (pointB[0] - pointA[0]) * progress;
-      const lng = pointA[1] + (pointB[1] - pointA[1]) * progress;
+      const pStart = waypoints[fromIdx];
+      const pEnd = waypoints[toIdx];
 
-      const dLat = pointB[0] - pointA[0];
-      const dLng = pointB[1] - pointA[1];
+      const lat = pStart[0] + (pEnd[0] - pStart[0]) * segmentProgress;
+      const lng = pStart[1] + (pEnd[1] - pStart[1]) * segmentProgress;
+
+      // Heading orientation angle
+      const dLat = pEnd[0] - pStart[0];
+      const dLng = pEnd[1] - pStart[1];
       const heading = (Math.atan2(dLng, dLat) * (180 / Math.PI) + 360) % 360;
+
+      // Calculate total route progress percentage
+      const totalProgressRatio = isMovingForward
+        ? (currentSegment + segmentProgress) / numSegments
+        : 1 - (currentSegment + (1 - segmentProgress)) / numSegments;
+
+      setRouteProgressPct(Math.round(totalProgressRatio * 100));
 
       if (droneMarkerRef.current) {
         droneMarkerRef.current.setLatLng([lat, lng]);
-        const updatedIcon = L.divIcon({
-          className: 'moving-drone-pin',
-          html: createDroneIconHtml(heading),
-          iconSize: [60, 60],
-          iconAnchor: [30, 30]
-        });
-        droneMarkerRef.current.setIcon(updatedIcon);
+        const legLabel = isMovingForward ? 'A ➔ B' : 'B ➔ A';
+        droneMarkerRef.current.setIcon(
+          L.divIcon({
+            className: 'moving-drone-pin',
+            html: createDroneIconHtml(heading, legLabel),
+            iconSize: [64, 64],
+            iconAnchor: [32, 32]
+          })
+        );
       }
 
-      animFrameRef.current = requestAnimationFrame(animate);
+      animFrameRef.current = requestAnimationFrame(animateRoadPatrol);
     };
 
-    animFrameRef.current = requestAnimationFrame(animate);
+    animFrameRef.current = requestAnimationFrame(animateRoadPatrol);
 
     return () => {
       if (animFrameRef.current) {
@@ -328,34 +373,36 @@ const filteredCount = defects.filter(d => {
           </div>
         </div>
 
-        {/* Status Bar */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 bg-[#FDF2F8] p-2 rounded-xl border border-[#FBCFE8] text-[11px] font-mono">
-          <div className="flex items-center space-x-2 text-[#9D174D]">
-            <span className="text-[#E11D48] font-extrabold flex items-center gap-1">
-              🛣️ ROAD SNAPPED PATH:
-            </span>
-            <span className="text-[#831843] font-bold">Pune Outer Ring Road → NH-48 Expressway</span>
+        {/* Point A to Point B Status & Progress Bar */}
+        <div className="bg-[#FDF2F8] p-2.5 rounded-xl border border-[#FBCFE8] text-[11px] font-mono space-y-2">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+            <div className="flex items-center space-x-2 text-[#9D174D]">
+              <span className="text-[#E11D48] font-extrabold flex items-center gap-1">
+                🛣️ ROAD MISSION:
+              </span>
+              <span className="px-2 py-0.5 rounded-md bg-[#DCFCE7] text-[#16A34A] font-extrabold border border-[#16A34A]/30">
+                📍 Point A (Depot)
+              </span>
+              <span className="text-[#E11D48] font-bold">➔</span>
+              <span className="px-2 py-0.5 rounded-md bg-[#FFF1F2] text-[#E11D48] font-extrabold border border-[#F43F5E]/30">
+                🏁 Point B (Wagholi Junction)
+              </span>
+            </div>
+
+            <div className="flex items-center space-x-2 font-bold text-[#831843]">
+              <span className="text-[#9D174D]">{currentLegText}</span>
+              <span className="px-2 py-0.5 rounded-md bg-[#E11D48] text-white font-extrabold">
+                {routeProgressPct}%
+              </span>
+            </div>
           </div>
 
-          <div className="flex items-center space-x-1 overflow-x-auto">
-            <span className="text-[#BE185D] font-bold px-1">FILTER ASSET:</span>
-            {[
-              { id: 'all', label: 'All' },
-              { id: 'road', label: '🛣️ Roads' },
-              { id: 'bridge', label: '🌉 Bridges' }
-            ].map(asset => (
-              <button
-                key={asset.id}
-                onClick={() => setActiveAssetFilter(asset.id)}
-                className={`px-2.5 py-0.5 rounded-md font-bold transition-all whitespace-nowrap ${
-                  activeAssetFilter === asset.id
-                    ? 'bg-[#E11D48] text-white shadow-xs'
-                    : 'text-[#9D174D] hover:text-[#831843]'
-                }`}
-              >
-                {asset.label}
-              </button>
-            ))}
+          {/* Route Progress Bar */}
+          <div className="w-full bg-[#FFFFFF] h-2 rounded-full overflow-hidden border border-[#FBCFE8]">
+            <div
+              className="bg-[#E11D48] h-full transition-all duration-300 rounded-full"
+              style={{ width: `${routeProgressPct}%` }}
+            />
           </div>
         </div>
       </div>
@@ -365,21 +412,23 @@ const filteredCount = defects.filter(d => {
         <div ref={containerRef} className="w-full h-full bg-[#FDF2F8]" />
 
         {/* Overlay Telemetry Tag */}
-        <div className="absolute top-3 left-3 z-[400] bg-[#FFFFFF]/90 backdrop-blur-md px-3 py-1.5 rounded-xl border border-[#FBCFE8] text-[11px] font-mono text-[#831843] space-y-0.5 shadow-xs">
-          <div className="font-extrabold flex items-center gap-1 text-[#E11D48]">
-            <span className="w-2 h-2 rounded-full bg-[#16A34A] animate-pulse" /> SKYGUARDIAN-X1 ACTIVE 🧸
+        <div className="absolute top-3 left-3 z-[400] bg-[#FFFFFF]/90 backdrop-blur-md px-3 py-2 rounded-xl border border-[#FBCFE8] text-[11px] font-mono text-[#831843] space-y-0.5 shadow-xs">
+          <div className="font-extrabold flex items-center gap-1.5 text-[#E11D48]">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#16A34A] animate-pulse" /> SKYGUARDIAN-X1 ROAD PATROL 🧸
           </div>
           <div className="text-[10px] text-[#9D174D] font-bold">
+            NAVIGATING: <span className="text-[#E11D48]">POINT A ➔ POINT B ON ROAD MAP</span>
+          </div>
+          <div className="text-[9.5px] text-[#9D174D]">
             LAT: 18.5679° N | LNG: 73.9143° E | ALT: 48.5m
           </div>
         </div>
 
         {/* Legend */}
         <div className="absolute bottom-3 left-3 z-[400] bg-[#FFFFFF]/90 backdrop-blur-md px-3 py-1.5 rounded-xl border border-[#FBCFE8] text-[10px] font-mono flex items-center space-x-3 text-[#831843] shadow-xs">
-          <span className="flex items-center gap-1 font-bold"><span className="w-2 h-2 rounded-full bg-[#E11D48]" /> Critical Crack</span>
-          <span className="flex items-center gap-1 font-bold"><span className="w-2 h-2 rounded-full bg-[#D97706]" /> Warning Damage</span>
-          <span className="flex items-center gap-1 font-bold"><span className="w-2 h-2 rounded-full bg-[#16A34A]" /> Resolved Pothole</span>
-          <span className="flex items-center gap-1 font-bold text-[#E11D48]">⚡ Road Flight Corridor</span>
+          <span className="flex items-center gap-1 font-bold"><span className="w-2.5 h-2.5 rounded-md bg-[#16A34A]" /> Point A (Start)</span>
+          <span className="flex items-center gap-1 font-bold"><span className="w-2.5 h-2.5 rounded-md bg-[#E11D48]" /> Point B (Target)</span>
+          <span className="flex items-center gap-1 font-bold text-[#E11D48]">⚡ Road Polyline Corridor</span>
         </div>
       </div>
 
