@@ -4,29 +4,20 @@
 
 @layer utilities {
   .glass-panel {
-    background: rgba(10, 15, 23, 0.78);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.07);
-    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+    background: #101C28;
+    border: 1px solid #152535;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
   }
   
   .glass-panel-cyan {
-    background: rgba(10, 15, 23, 0.88);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(0, 243, 255, 0.25);
-    box-shadow: 0 0 30px rgba(0, 243, 255, 0.08);
-  }
-
-  .glass-panel-purple {
-    background: rgba(10, 15, 23, 0.88);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(168, 85, 247, 0.25);
-    box-shadow: 0 0 30px rgba(168, 85, 247, 0.08);
+    background: #101C28;
+    border: 1px solid rgba(22, 185, 232, 0.3);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
   }
 
   .hud-border {
     position: relative;
+    border: 1px solid #152535;
   }
   .hud-border::before {
     content: '';
@@ -35,8 +26,8 @@
     left: 0;
     width: 6px;
     height: 6px;
-    border-top: 1.5px solid #00f3ff;
-    border-left: 1.5px solid #00f3ff;
+    border-top: 1.5px solid #16B9E8;
+    border-left: 1.5px solid #16B9E8;
   }
   .hud-border::after {
     content: '';
@@ -45,54 +36,35 @@
     right: 0;
     width: 6px;
     height: 6px;
-    border-bottom: 1.5px solid #00f3ff;
-    border-right: 1.5px solid #00f3ff;
+    border-bottom: 1.5px solid #16B9E8;
+    border-right: 1.5px solid #16B9E8;
   }
 }
 
-/* Custom Tactical Scrollbar */
+/* Tactical Scrollbar */
 ::-webkit-scrollbar {
   width: 5px;
   height: 5px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #05070B;
+  background: #08111A;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #141E30;
+  background: #152535;
   border-radius: 2px;
   border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #00f3ff;
+  background: #16B9E8;
 }
 
 /* Leaflet Map Pin Adjustments */
 .pune-map-pin {
   background: transparent;
   border: none;
-}
-
-/* Custom Keyframe Animations */
-@keyframes radarSweep {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.animate-radar {
-  animation: radarSweep 6s linear infinite;
-}
-
-@keyframes pulseGlow {
-  0%, 100% { opacity: 0.4; }
-  50% { opacity: 0.9; }
-}
-
-.animate-pulse-glow {
-  animation: pulseGlow 2.5s ease-in-out infinite;
 }
 
 @keyframes spinFast {
@@ -109,4 +81,5 @@
   border: none;
   transition: transform 0.1s linear;
 }
+
 

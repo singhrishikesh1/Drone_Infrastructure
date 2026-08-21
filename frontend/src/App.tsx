@@ -7,7 +7,6 @@ import { DefectList } from './components/DefectList';
 import { DefectDetailModal } from './components/DefectDetailModal';
 import { AirSimUploadModal } from './components/AirSimUploadModal';
 import { Drone3DBackground } from './components/Drone3DBackground';
-import { RedisTelemetryDashboard } from './components/RedisTelemetryDashboard';
 import { DroneFleetServicing } from './components/DroneFleetServicing';
 import { ProblemSolvedLog } from './components/ProblemSolvedLog';
 import { ReportsManager } from './components/ReportsManager';
@@ -16,16 +15,16 @@ import { Defect, AnalyticsSummary } from './types';
 export const App: React.FC = () => {
   const [defects, setDefects] = useState<Defect[]>([]);
   const [summary, setSummary] = useState<AnalyticsSummary>({
-    totalInspections: 4,
-    criticalRisks: 2,
+    totalInspections: 3,
+    criticalRisks: 1,
     highRisks: 1,
     resolvedProblems: 1,
-    totalEstimatedBudget: 57600,
+    totalEstimatedBudget: 40200,
     currency: "₹",
-    byAssetType: { road: 2, bridge: 1, railway: 0, building: 1 }
+    byAssetType: { road: 2, bridge: 1, railway: 0, building: 0 }
   });
 
-  const [activeTab, setActiveTab] = useState<'map' | 'redis' | 'servicing' | 'problems' | 'reports'>('map');
+  const [activeTab, setActiveTab] = useState<'telemetry' | 'drone' | 'defects' | 'reports'>('telemetry');
   const [selectedDefect, setSelectedDefect] = useState<Defect | null>(null);
   const [isScanModalOpen, setIsScanModalOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
@@ -82,11 +81,11 @@ export const App: React.FC = () => {
   const criticalCount = defects.filter((d) => d.riskLevel === 'CRITICAL' && d.status !== 'RESOLVED').length;
 
   return (
-    <div className="min-h-screen bg-[#05070B] text-slate-100 flex flex-col relative font-['Inter',sans-serif] selection:bg-cyan-500 selection:text-aerospace-950">
+    <div className="min-h-screen bg-[#08111A] text-[#F1F5F9] flex flex-col relative font-sans">
       {/* 3D Flying Drone Background Scene */}
       <Drone3DBackground />
 
-      {/* Top Aerospace Brand & Navigation Header */}
+      {/* Top Aerospace Brand & Navigation Header (DRONACHARYA) */}
       <Navbar
         activeTab={activeTab}
         setActiveTab={setActiveTab}
@@ -100,13 +99,13 @@ export const App: React.FC = () => {
         {/* Dynamic Telemetry HUD Banner */}
         <LiveTelemetryHUD />
 
-        {/* Dynamic View Tab Switcher */}
-        {activeTab === 'map' && (
+        {/* Tab 1: LIVE TELEMETRY */}
+        {activeTab === 'telemetry' && (
           <div className="space-y-4 animate-fade-in">
-            {/* Executive Metric Strip */}
-            <StatCards summary={summary} activeDronesCount={3} />
+            {/* Metric Cards (Single Active Drone SkyGuardian-X1) */}
+            <StatCards summary={summary} activeDronesCount={1} />
 
-            {/* GIS Operational Map & AI Defect Queue Split */}
+            {/* GIS Road Patrol Map & Live Inspection Alerts Split */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
               {/* GIS Command Map (7 cols) */}
               <div className="lg:col-span-7">
@@ -117,7 +116,7 @@ export const App: React.FC = () => {
                 />
               </div>
 
-              {/* AI Infrastructure Intelligence Queue (5 cols) */}
+              {/* Live Inspection Alerts (5 cols) */}
               <div className="lg:col-span-5">
                 <DefectList
                   defects={defects}
@@ -129,20 +128,21 @@ export const App: React.FC = () => {
           </div>
         )}
 
-        {activeTab === 'redis' && (
-          <div className="animate-fade-in">
-            <RedisTelemetryDashboard />
-          </div>
-        )}
-
-        {activeTab === 'servicing' && (
+        {/* Tab 2: DRONE */}
+        {activeTab === 'drone' && (
           <div className="animate-fade-in">
             <DroneFleetServicing />
           </div>
         )}
 
-        {activeTab === 'problems' && (
-          <div className="animate-fade-in">
+        {/* Tab 3: DEFECTS */}
+        {activeTab === 'defects' && (
+          <div className="space-y-4 animate-fade-in">
+            <DefectList
+              defects={defects}
+              selectedDefect={selectedDefect}
+              onSelectDefect={(d) => setSelectedDefect(d)}
+            />
             <ProblemSolvedLog
               defects={defects}
               onStatusChange={handleStatusChange}
@@ -150,6 +150,7 @@ export const App: React.FC = () => {
           </div>
         )}
 
+        {/* Tab 4: REPORTS */}
         {activeTab === 'reports' && (
           <div className="animate-fade-in">
             <ReportsManager defects={defects} />
@@ -177,3 +178,4 @@ export const App: React.FC = () => {
 };
 
 export default App;
+

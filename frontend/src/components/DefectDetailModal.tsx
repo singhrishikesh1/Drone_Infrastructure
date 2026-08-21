@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Defect } from '../types';
-import { X, FileText, Send, AlertOctagon, Box, Calculator, ShieldCheck, CheckCircle2, Cpu, Sparkles } from 'lucide-react';
+import { X, FileText, Send, AlertOctagon, Box, Calculator, ShieldCheck, CheckCircle2, Cpu } from 'lucide-react';
 
 interface DefectDetailModalProps {
   defect: Defect | null;
@@ -36,32 +36,31 @@ export const DefectDetailModal: React.FC<DefectDetailModalProps> = ({ defect, on
     }
   };
 
-  let riskBadgeColor = 'bg-emerald-950 text-emerald-400 border-emerald-500/40';
-  if (defect.riskLevel === 'CRITICAL') riskBadgeColor = 'bg-red-950 text-red-400 border-red-500/40 animate-pulse';
-  else if (defect.riskLevel === 'HIGH') riskBadgeColor = 'bg-orange-950 text-orange-400 border-orange-500/40';
-  else if (defect.riskLevel === 'MEDIUM') riskBadgeColor = 'bg-yellow-950 text-yellow-400 border-yellow-500/40';
+  let riskBadgeColor = 'bg-[#22C55E]/10 text-[#22C55E] border-[#22C55E]/30';
+  if (defect.riskLevel === 'CRITICAL') riskBadgeColor = 'bg-[#EF4444]/10 text-[#EF4444] border-[#EF4444]/30';
+  else if (defect.riskLevel === 'HIGH' || defect.riskLevel === 'MEDIUM') riskBadgeColor = 'bg-[#F59E0B]/10 text-[#F59E0B] border-[#F59E0B]/30';
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#05070B]/85 backdrop-blur-xl animate-fade-in font-['Inter',sans-serif]">
-      <div className="relative w-full max-w-4xl max-h-[90vh] glass-panel-cyan rounded-2xl overflow-hidden flex flex-col border border-cyan-500/30 hud-border shadow-2xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#08111A]/90 backdrop-blur-md animate-fade-in font-sans">
+      <div className="relative w-full max-w-4xl max-h-[90vh] glass-panel-cyan rounded-2xl overflow-hidden flex flex-col border border-[#16B9E8]/30 hud-border shadow-2xl bg-[#101C28]">
         
         {/* Header */}
-        <div className="p-4 border-b border-white/[0.08] flex items-center justify-between bg-[#05070B]/90">
+        <div className="p-4 border-b border-[#152535] flex items-center justify-between bg-[#08111A]">
           <div>
             <div className="flex items-center space-x-3 text-xs font-mono">
               <span className={`px-2.5 py-0.5 rounded font-extrabold border uppercase ${riskBadgeColor}`}>
                 {defect.riskLevel} RISK ({defect.riskScore}/100)
               </span>
-              <span className="text-slate-400">ID: {defect.id}</span>
-              <span className="text-cyan-400">GPS: {defect.lat.toFixed(4)}° N, {defect.lng.toFixed(4)}° E</span>
+              <span className="text-[#94A3B8]">ID: {defect.id}</span>
+              <span className="text-[#16B9E8]">GPS: {defect.lat.toFixed(4)}° N, {defect.lng.toFixed(4)}° E</span>
             </div>
-            <h2 className="text-base font-extrabold text-slate-100 mt-1 uppercase font-mono tracking-wider">{defect.title}</h2>
-            <p className="text-xs text-slate-400">📍 {defect.assetName} — {defect.locationName}</p>
+            <h2 className="text-base font-extrabold text-[#F1F5F9] mt-1 uppercase font-mono tracking-wider">{defect.title}</h2>
+            <p className="text-xs text-[#94A3B8]">📍 {defect.locationName}</p>
           </div>
 
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg bg-[#05070B] text-slate-400 hover:text-white border border-white/[0.08] transition-all"
+            className="p-1.5 rounded-lg bg-[#152535] text-[#94A3B8] hover:text-[#F1F5F9] border border-[#152535] transition-all"
           >
             <X className="w-5 h-5" />
           </button>
@@ -70,11 +69,42 @@ export const DefectDetailModal: React.FC<DefectDetailModalProps> = ({ defect, on
         {/* Modal Body */}
         <div className="overflow-y-auto p-5 space-y-5 flex-1">
           
+          {/* WORKFLOW PIPELINE TRACKER (Prompt Spec) */}
+          <div className="p-4 rounded-xl bg-[#152535] border border-[#16B9E8]/20 space-y-3 font-mono">
+            <h4 className="text-xs font-bold text-[#16B9E8] uppercase tracking-wider">
+              DEFECT REMEDIATION WORKFLOW LIFECYCLE
+            </h4>
+            <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 text-xs">
+              <div className="p-2.5 rounded-lg bg-[#101C28] border border-[#22C55E]/40 text-[#22C55E] flex items-center space-x-2 font-bold">
+                <CheckCircle2 className="w-4 h-4 text-[#22C55E]" />
+                <span>✓ Scan Completed</span>
+              </div>
+              <div className="p-2.5 rounded-lg bg-[#101C28] border border-[#22C55E]/40 text-[#22C55E] flex items-center space-x-2 font-bold">
+                <CheckCircle2 className="w-4 h-4 text-[#22C55E]" />
+                <span>✓ Defect Detected</span>
+              </div>
+              <div className={`p-2.5 rounded-lg bg-[#101C28] border flex items-center space-x-2 font-bold ${
+                defect.status !== 'OPEN'
+                  ? 'border-[#22C55E]/40 text-[#22C55E]'
+                  : 'border-[#16B9E8] text-[#16B9E8]'
+              }`}>
+                <span>● Repair Assigned</span>
+              </div>
+              <div className={`p-2.5 rounded-lg bg-[#101C28] border flex items-center space-x-2 font-bold ${
+                defect.status === 'RESOLVED'
+                  ? 'border-[#22C55E]/40 text-[#22C55E]'
+                  : 'border-[#152535] text-[#64748B]'
+              }`}>
+                <span>{defect.status === 'RESOLVED' ? '✓' : '○'} Verification Pending</span>
+              </div>
+            </div>
+          </div>
+
           {/* Dual Visualizer & Volumetrics */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             
             {/* View Selector Box */}
-            <div className="relative rounded-xl overflow-hidden border border-white/[0.08] bg-[#05070B] h-60 group">
+            <div className="relative rounded-xl overflow-hidden border border-[#152535] bg-[#08111A] h-60 group">
               {activeView === 'yolo' ? (
                 <img
                   src={defect.thumbnailUrl}
@@ -82,23 +112,22 @@ export const DefectDetailModal: React.FC<DefectDetailModalProps> = ({ defect, on
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <div className="w-full h-full bg-gradient-to-br from-indigo-950/40 via-aerospace-900 to-cyan-950/40 p-5 flex flex-col items-center justify-center relative font-mono">
-                  <div className="absolute inset-0 opacity-15 bg-[radial-gradient(#00f3ff_1px,transparent_1px)] [background-size:14px_14px]"></div>
-                  <Cpu className="w-10 h-10 text-cyan-400 animate-pulse mb-2" />
-                  <p className="text-xs font-bold text-cyan-300">Open3D Point Cloud Depth Mesh</p>
-                  <p className="text-[10px] text-slate-400 mt-1">Depth Range: 0.0m — {defect.volumetric?.max_depth_cm || 18} cm</p>
-                  <div className="mt-3 px-3 py-1 bg-[#0A0F17] rounded border border-cyan-500/40 text-center">
-                    <span className="text-xs text-cyan-400 font-bold">Calculated Vol: {defect.volumetric?.volume_m3} m³</span>
+                <div className="w-full h-full bg-[#101C28] p-5 flex flex-col items-center justify-center relative font-mono border border-[#152535]">
+                  <Cpu className="w-10 h-10 text-[#16B9E8] mb-2" />
+                  <p className="text-xs font-bold text-[#16B9E8]">Open3D Point Cloud Depth Mesh</p>
+                  <p className="text-[10px] text-[#94A3B8] mt-1">Depth Range: 0.0m — {defect.volumetric?.max_depth_cm || 18} cm</p>
+                  <div className="mt-3 px-3 py-1 bg-[#152535] rounded border border-[#16B9E8]/40 text-center">
+                    <span className="text-xs text-[#16B9E8] font-bold">Calculated Vol: {defect.volumetric?.volume_m3} m³</span>
                   </div>
                 </div>
               )}
 
               {/* View Toggle Bar */}
-              <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between glass-panel p-1 rounded-lg font-mono text-[11px]">
+              <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between bg-[#101C28] border border-[#152535] p-1 rounded-lg font-mono text-[11px]">
                 <button
                   onClick={() => setActiveView('yolo')}
                   className={`flex-1 py-1 font-bold rounded transition-all ${
-                    activeView === 'yolo' ? 'bg-cyan-500 text-aerospace-950' : 'text-slate-400 hover:text-white'
+                    activeView === 'yolo' ? 'bg-[#16B9E8] text-[#08111A]' : 'text-[#94A3B8] hover:text-[#F1F5F9]'
                   }`}
                 >
                   YOLOv8 Mask
@@ -106,7 +135,7 @@ export const DefectDetailModal: React.FC<DefectDetailModalProps> = ({ defect, on
                 <button
                   onClick={() => setActiveView('depth')}
                   className={`flex-1 py-1 font-bold rounded transition-all ${
-                    activeView === 'depth' ? 'bg-cyan-500 text-aerospace-950' : 'text-slate-400 hover:text-white'
+                    activeView === 'depth' ? 'bg-[#16B9E8] text-[#08111A]' : 'text-[#94A3B8] hover:text-[#F1F5F9]'
                   }`}
                 >
                   3D Depth Map
@@ -115,40 +144,40 @@ export const DefectDetailModal: React.FC<DefectDetailModalProps> = ({ defect, on
             </div>
 
             {/* Volumetric Metric Grid */}
-            <div className="glass-panel p-4 rounded-xl border border-white/[0.08] flex flex-col justify-between font-mono">
-              <h4 className="text-xs font-extrabold text-cyan-400 uppercase tracking-wider flex items-center gap-2">
+            <div className="glass-panel p-4 rounded-xl border border-[#152535] bg-[#101C28] flex flex-col justify-between font-mono">
+              <h4 className="text-xs font-extrabold text-[#16B9E8] uppercase tracking-wider flex items-center gap-2">
                 <Box className="w-4 h-4" /> 3D VOLUMETRIC MEASUREMENTS
               </h4>
 
               <div className="grid grid-cols-2 gap-2.5 mt-2.5">
-                <div className="bg-[#05070B] p-2.5 rounded-lg border border-white/[0.06]">
-                  <p className="text-[10px] text-slate-400">DEFECT VOLUME</p>
-                  <p className="text-base font-extrabold text-slate-100">{defect.volumetric?.volume_m3 || 0} m³</p>
-                  <p className="text-[9px] text-cyan-400">~{((defect.volumetric?.volume_m3 || 0) * 1000).toFixed(0)} Liters</p>
+                <div className="bg-[#152535] p-2.5 rounded-lg border border-[#152535]">
+                  <p className="text-[10px] text-[#94A3B8]">DEFECT VOLUME</p>
+                  <p className="text-base font-extrabold text-[#F1F5F9]">{defect.volumetric?.volume_m3 || 0} m³</p>
+                  <p className="text-[9px] text-[#16B9E8]">~{((defect.volumetric?.volume_m3 || 0) * 1000).toFixed(0)} Liters</p>
                 </div>
-                <div className="bg-[#05070B] p-2.5 rounded-lg border border-white/[0.06]">
-                  <p className="text-[10px] text-slate-400">SURFACE AREA</p>
-                  <p className="text-base font-extrabold text-slate-100">{defect.volumetric?.surface_area_m2 || 0} m²</p>
-                  <p className="text-[9px] text-slate-400">{defect.volumetric?.length_m}m × {defect.volumetric?.width_m}m</p>
+                <div className="bg-[#152535] p-2.5 rounded-lg border border-[#152535]">
+                  <p className="text-[10px] text-[#94A3B8]">SURFACE AREA</p>
+                  <p className="text-base font-extrabold text-[#F1F5F9]">{defect.volumetric?.surface_area_m2 || 0} m²</p>
+                  <p className="text-[9px] text-[#94A3B8]">{defect.volumetric?.length_m}m × {defect.volumetric?.width_m}m</p>
                 </div>
-                <div className="bg-[#05070B] p-2.5 rounded-lg border border-white/[0.06]">
-                  <p className="text-[10px] text-slate-400">MAX DEPTH</p>
-                  <p className="text-base font-extrabold text-red-400">{defect.volumetric?.max_depth_cm || 0} cm</p>
-                  <p className="text-[9px] text-slate-400">Avg: {defect.volumetric?.avg_depth_cm} cm</p>
+                <div className="bg-[#152535] p-2.5 rounded-lg border border-[#152535]">
+                  <p className="text-[10px] text-[#94A3B8]">MAX DEPTH</p>
+                  <p className="text-base font-extrabold text-[#EF4444]">{defect.volumetric?.max_depth_cm || 0} cm</p>
+                  <p className="text-[9px] text-[#94A3B8]">Avg: {defect.volumetric?.avg_depth_cm} cm</p>
                 </div>
-                <div className="bg-[#05070B] p-2.5 rounded-lg border border-white/[0.06]">
-                  <p className="text-[10px] text-slate-400">AI CONFIDENCE</p>
-                  <p className="text-base font-extrabold text-emerald-400">{(defect.confidence * 100).toFixed(1)}%</p>
-                  <p className="text-[9px] text-slate-400 truncate">{defect.defectClass}</p>
+                <div className="bg-[#152535] p-2.5 rounded-lg border border-[#152535]">
+                  <p className="text-[10px] text-[#94A3B8]">AI CONFIDENCE</p>
+                  <p className="text-base font-extrabold text-[#22C55E]">{(defect.confidence * 100).toFixed(1)}%</p>
+                  <p className="text-[9px] text-[#94A3B8] truncate">{defect.defectClass}</p>
                 </div>
               </div>
 
               {/* Risk Reasons */}
-              <div className="mt-2.5 p-2 rounded-lg bg-red-950/40 border border-red-900/40 font-sans text-xs">
-                <p className="text-[10px] font-mono font-bold text-red-300 flex items-center gap-1 uppercase">
-                  <AlertOctagon className="w-3.5 h-3.5 text-red-400" /> RISK FACTORS:
+              <div className="mt-2.5 p-2 rounded-lg bg-[#EF4444]/10 border border-[#EF4444]/30 font-sans text-xs">
+                <p className="text-[10px] font-mono font-bold text-[#EF4444] flex items-center gap-1 uppercase">
+                  <AlertOctagon className="w-3.5 h-3.5 text-[#EF4444]" /> RISK FACTORS:
                 </p>
-                <ul className="mt-1 text-[11px] text-red-200/80 list-disc list-inside space-y-0.5">
+                <ul className="mt-1 text-[11px] text-[#F1F5F9] list-disc list-inside space-y-0.5">
                   {defect.riskReasons?.map((r, i) => (
                     <li key={i}>{r}</li>
                   ))}
@@ -158,12 +187,12 @@ export const DefectDetailModal: React.FC<DefectDetailModalProps> = ({ defect, on
           </div>
 
           {/* Bill of Materials & Cost Table */}
-          <div className="glass-panel p-4 rounded-xl border border-white/[0.08] space-y-3 font-mono">
-            <div className="flex items-center justify-between border-b border-white/[0.08] pb-2">
-              <h4 className="text-xs font-extrabold text-slate-100 uppercase tracking-wider flex items-center gap-2">
-                <Calculator className="w-4 h-4 text-emerald-400" /> CIVIL ENGINEERING MATERIAL BOM & REPAIR COSTS
+          <div className="glass-panel p-4 rounded-xl border border-[#152535] bg-[#101C28] space-y-3 font-mono">
+            <div className="flex items-center justify-between border-b border-[#152535] pb-2">
+              <h4 className="text-xs font-extrabold text-[#F1F5F9] uppercase tracking-wider flex items-center gap-2">
+                <Calculator className="w-4 h-4 text-[#22C55E]" /> CIVIL ENGINEERING MATERIAL BOM & REPAIR COSTS
               </h4>
-              <span className="text-sm font-bold text-emerald-400">
+              <span className="text-sm font-bold text-[#22C55E]">
                 Total Est: ₹{defect.costEstimation?.total_estimated_cost?.toLocaleString()}
               </span>
             </div>
@@ -171,31 +200,31 @@ export const DefectDetailModal: React.FC<DefectDetailModalProps> = ({ defect, on
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
                 <thead>
-                  <tr className="text-slate-400 border-b border-white/[0.06] text-[10px]">
+                  <tr className="text-[#94A3B8] border-b border-[#152535] text-[10px]">
                     <th className="pb-1.5 font-semibold">Material Description</th>
                     <th className="pb-1.5 font-semibold">Quantity Required</th>
                     <th className="pb-1.5 font-semibold">Unit Rate</th>
                     <th className="pb-1.5 font-semibold text-right">Subtotal Cost</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-white/[0.04] text-slate-200 text-[11px]">
+                <tbody className="divide-y divide-[#152535] text-[#F1F5F9] text-[11px]">
                   {defect.costEstimation?.required_materials?.map((item, idx) => (
-                    <tr key={idx} className="hover:bg-white/[0.02]">
+                    <tr key={idx} className="hover:bg-[#152535]/50">
                       <td className="py-2 font-medium font-sans">{item.name}</td>
-                      <td className="py-2 text-slate-300">{item.quantity}</td>
-                      <td className="py-2 text-slate-400">{item.unit_cost}</td>
-                      <td className="py-2 text-right font-bold text-slate-100">₹{item.cost.toLocaleString()}</td>
+                      <td className="py-2 text-[#94A3B8]">{item.quantity}</td>
+                      <td className="py-2 text-[#94A3B8]">{item.unit_cost}</td>
+                      <td className="py-2 text-right font-bold text-[#F1F5F9]">₹{item.cost.toLocaleString()}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
 
-            <div className="p-2.5 bg-[#05070B] rounded-lg border border-white/[0.06] flex items-start space-x-2 text-xs font-sans">
-              <ShieldCheck className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
+            <div className="p-2.5 bg-[#152535] rounded-lg border border-[#152535] flex items-start space-x-2 text-xs font-sans">
+              <ShieldCheck className="w-4 h-4 text-[#16B9E8] shrink-0 mt-0.5" />
               <div>
-                <span className="font-bold text-cyan-300 font-mono text-[11px]">RECOMMENDED CIVIL ACTION: </span>
-                <span className="text-slate-300 text-xs">{defect.costEstimation?.recommended_action}</span>
+                <span className="font-bold text-[#16B9E8] font-mono text-[11px]">RECOMMENDED CIVIL ACTION: </span>
+                <span className="text-[#F1F5F9] text-xs">{defect.costEstimation?.recommended_action}</span>
               </div>
             </div>
           </div>
@@ -203,8 +232,8 @@ export const DefectDetailModal: React.FC<DefectDetailModalProps> = ({ defect, on
           {/* Action Bar */}
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-1">
             {smsStatus && (
-              <div className="text-xs text-emerald-400 flex items-center gap-1 font-medium">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400" /> {smsStatus}
+              <div className="text-xs text-[#22C55E] flex items-center gap-1 font-medium font-mono">
+                <CheckCircle2 className="w-4 h-4 text-[#22C55E]" /> {smsStatus}
               </div>
             )}
             
@@ -212,15 +241,15 @@ export const DefectDetailModal: React.FC<DefectDetailModalProps> = ({ defect, on
               <button
                 onClick={handleSendSMS}
                 disabled={sendingSms}
-                className="px-3.5 py-2 rounded-lg bg-[#05070B] hover:bg-slate-800 text-slate-200 font-bold flex items-center space-x-2 border border-white/[0.1] transition-all"
+                className="px-3.5 py-2 rounded-lg bg-[#152535] hover:bg-[#1C3247] text-[#F1F5F9] font-bold flex items-center space-x-2 border border-[#152535] transition-all"
               >
-                <Send className="w-3.5 h-3.5 text-cyan-400" />
+                <Send className="w-3.5 h-3.5 text-[#16B9E8]" />
                 <span>{sendingSms ? 'DISPATCHING...' : 'TWILIO SMS ALERT'}</span>
               </button>
 
               <button
                 onClick={handleDownloadPDF}
-                className="px-4 py-2 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-aerospace-950 font-extrabold flex items-center space-x-2 shadow-lg shadow-emerald-500/20 transition-all transform hover:scale-[1.02]"
+                className="px-4 py-2 rounded-lg bg-[#22C55E] hover:bg-[#1ea850] text-[#08111A] font-extrabold flex items-center space-x-2 shadow-sm transition-all"
               >
                 <FileText className="w-3.5 h-3.5" />
                 <span>DOWNLOAD PDF AUDIT REPORT</span>
@@ -233,4 +262,5 @@ export const DefectDetailModal: React.FC<DefectDetailModalProps> = ({ defect, on
     </div>
   );
 };
+
 

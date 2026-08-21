@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { DroneItem, ServiceRecord } from '../types';
-import { ShieldCheck, Cpu, Battery, Wrench, AlertTriangle, Calendar, PlusCircle, CheckCircle2, Navigation } from 'lucide-react';
+import { ShieldCheck, Cpu, Battery, Wrench, Navigation } from 'lucide-react';
 
 export const DroneFleetServicing: React.FC = () => {
   const [drones, setDrones] = useState<DroneItem[]>([]);
   const [serviceLogs, setServiceLogs] = useState<ServiceRecord[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [showBookModal, setShowBookModal] = useState<boolean>(false);
-  const [selectedDroneForService, setSelectedDroneForService] = useState<string>('DRONE-PUNE-01');
-  const [serviceTypeInput, setServiceTypeInput] = useState<string>('Rotor Calibration & Avionics Check');
+  const [serviceTypeInput, setServiceTypeInput] = useState<string>('Rotor Calibration & LiDAR Sensor Check');
 
   const fetchFleetData = async () => {
     try {
@@ -16,7 +15,7 @@ export const DroneFleetServicing: React.FC = () => {
       const droneRes = await fetch('http://localhost:5002/api/drones/live');
       const droneJson = await droneRes.json();
       if (droneJson.success && droneJson.data) {
-        setDrones(droneJson.data);
+        setDrones(droneJson.data.slice(0, 1));
       }
 
       const srvRes = await fetch('http://localhost:5002/api/servicing');
@@ -28,54 +27,20 @@ export const DroneFleetServicing: React.FC = () => {
       setDrones([
         {
           id: "DRONE-PUNE-01",
-          name: "SkyGuardian-X1 Pro",
+          name: "SkyGuardian-X1",
           model: "Matrice 300 RTK Industrial",
           status: "FLYING",
-          assignedArea: "Viman Nagar Flyover Sector",
+          assignedArea: "Pune Outer Ring Road Patrol Sector",
           lat: 18.5679,
           lng: 73.9143,
           altitude: 48.5,
           speedKmH: 24.2,
           batteryPercent: 88,
           rotorHealth: 96,
-          cameraStream: "HD Thermal + LiDAR Scan Active",
-          lastServiceDate: "2026-07-20",
-          nextServiceDue: "2026-08-25",
+          cameraStream: "HD Thermal + LiDAR Road Scan",
+          lastServiceDate: "2026-08-10",
+          nextServiceDue: "2026-09-10",
           totalFlightHours: 142.5
-        },
-        {
-          id: "DRONE-PUNE-02",
-          name: "AeroFalcon-P2 Autonomous",
-          model: "Skydio X2D Autonomous Inspector",
-          status: "FLYING",
-          assignedArea: "Kharadi EON Bridge Sector",
-          lat: 18.5515,
-          lng: 73.9348,
-          altitude: 38.0,
-          speedKmH: 18.5,
-          batteryPercent: 74,
-          rotorHealth: 92,
-          cameraStream: "AI Visual Defect Detector (YOLOv8)",
-          lastServiceDate: "2026-07-15",
-          nextServiceDue: "2026-08-20",
-          totalFlightHours: 198.0
-        },
-        {
-          id: "DRONE-PUNE-03",
-          name: "TerraRover-D3 Heavy Payload",
-          model: "Freefly Alta X Aerial Mapper",
-          status: "CHARGING",
-          assignedArea: "Wagholi Highway Base Station",
-          lat: 18.5808,
-          lng: 73.9818,
-          altitude: 0.0,
-          speedKmH: 0.0,
-          batteryPercent: 99,
-          rotorHealth: 98,
-          cameraStream: "3D Photogrammetry Mesh Generator",
-          lastServiceDate: "2026-08-01",
-          nextServiceDue: "2026-09-01",
-          totalFlightHours: 89.2
         }
       ]);
     } finally {
@@ -90,13 +55,12 @@ export const DroneFleetServicing: React.FC = () => {
   const handleBookService = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const droneObj = drones.find(d => d.id === selectedDroneForService);
       const res = await fetch('http://localhost:5002/api/servicing/request', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          droneId: selectedDroneForService,
-          droneName: droneObj?.name || 'Drone Unit',
+          droneId: 'DRONE-PUNE-01',
+          droneName: 'SkyGuardian-X1',
           serviceType: serviceTypeInput,
           notes: 'Routine preventative servicing ticket created.'
         })
@@ -112,146 +76,150 @@ export const DroneFleetServicing: React.FC = () => {
     }
   };
 
+  const activeDrone = drones[0] || {
+    id: "DRONE-PUNE-01",
+    name: "SkyGuardian-X1",
+    model: "Matrice 300 RTK Industrial",
+    status: "FLYING",
+    assignedArea: "Pune Outer Ring Road Patrol Sector",
+    lat: 18.5679,
+    lng: 73.9143,
+    altitude: 48.5,
+    speedKmH: 24.2,
+    batteryPercent: 88,
+    rotorHealth: 96,
+    cameraStream: "HD Thermal + LiDAR Road Scan",
+    lastServiceDate: "2026-08-10",
+    nextServiceDue: "2026-09-10",
+    totalFlightHours: 142.5
+  };
+
   return (
     <div className="space-y-4 font-mono text-xs">
       {/* Header Banner */}
-      <div className="glass-panel p-4 rounded-xl border border-white/[0.08] bg-[#0A0F17]/90 shadow-2xl flex flex-col md:flex-row items-start md:items-center justify-between gap-3 hud-border">
+      <div className="glass-panel p-4 rounded-xl border border-[#152535] bg-[#101C28] shadow-md flex flex-col md:flex-row items-start md:items-center justify-between gap-3 hud-border font-sans">
         <div className="flex items-center space-x-3">
-          <div className="w-9 h-9 rounded-lg bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center">
-            <Cpu className="w-5 h-5 text-cyan-400 animate-pulse" />
+          <div className="w-9 h-9 rounded-lg bg-[#16B9E8]/10 border border-[#16B9E8]/30 flex items-center justify-center">
+            <Cpu className="w-5 h-5 text-[#16B9E8]" />
           </div>
           <div>
-            <h2 className="text-sm font-extrabold text-slate-100 uppercase tracking-wider flex items-center gap-2">
-              AUTONOMOUS FLEET HANGAR & MAINTENANCE
-              <span className="text-[9px] px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">
-                {drones.filter(d => d.status === 'FLYING').length} DRONES IN AIR
+            <h2 className="text-sm font-extrabold text-[#F1F5F9] uppercase tracking-wider flex items-center gap-2">
+              ACTIVE DRONE TELEMETRY & MAINTENANCE
+              <span className="text-[9px] px-2 py-0.5 rounded bg-[#22C55E]/10 text-[#22C55E] border border-[#22C55E]/30 font-mono font-bold">
+                1 ACTIVE DRONE IN AIR
               </span>
             </h2>
-            <p className="text-[11px] text-slate-400 font-sans">Live GPS Telemetry, Battery Status, Motor Diagnostics & Avionics Tickets</p>
+            <p className="text-[11px] text-[#94A3B8]">Live GPS Telemetry, Battery Status, Motor Diagnostics & Avionics Tickets</p>
           </div>
         </div>
 
         <button
           onClick={() => setShowBookModal(true)}
-          className="flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-aerospace-950 font-bold text-xs shadow-lg shadow-cyan-500/20 transition-all uppercase tracking-wider"
+          className="flex items-center space-x-2 px-3.5 py-1.5 rounded-lg bg-[#16B9E8] hover:bg-[#38CBF3] text-[#08111A] font-extrabold text-xs transition-all uppercase tracking-wider"
         >
           <Wrench className="w-3.5 h-3.5" />
           <span>SCHEDULE SERVICING</span>
         </button>
       </div>
 
-      {/* Active Drones Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {drones.map((drone) => (
-          <div
-            key={drone.id}
-            className="glass-panel p-4 rounded-xl border border-white/[0.08] bg-[#0A0F17]/90 hover:border-slate-700 transition-all space-y-3 shadow-xl"
-          >
-            {/* Top row */}
-            <div className="flex items-center justify-between">
-              <div>
-                <span className="text-[10px] text-cyan-400 font-bold">{drone.id}</span>
-                <h3 className="text-sm font-bold text-slate-100 font-sans">{drone.name}</h3>
-                <span className="text-[10px] text-slate-400">{drone.model}</span>
-              </div>
-              <span
-                className={`px-2 py-0.5 rounded text-[10px] font-bold border ${
-                  drone.status === 'FLYING'
-                    ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30 animate-pulse'
-                    : 'bg-amber-500/10 text-amber-400 border-amber-500/30'
-                }`}
-              >
-                ● {drone.status}
+      {/* Active Drone Spec Card */}
+      <div className="glass-panel p-5 rounded-xl border border-[#152535] bg-[#101C28] space-y-4 shadow-md font-sans">
+        <div className="flex items-center justify-between border-b border-[#152535] pb-3">
+          <div>
+            <span className="text-xs text-[#16B9E8] font-mono font-bold">{activeDrone.id}</span>
+            <h3 className="text-base font-extrabold text-[#F1F5F9]">{activeDrone.name}</h3>
+            <span className="text-xs text-[#94A3B8] font-mono">Model: {activeDrone.model}</span>
+          </div>
+          <span className="px-3 py-1 rounded text-xs font-bold font-mono border bg-[#22C55E]/10 text-[#22C55E] border-[#22C55E]/30">
+            ● AUTONOMOUS PATROL
+          </span>
+        </div>
+
+        {/* Location Sector */}
+        <div className="p-3 rounded-lg bg-[#152535] border border-[#152535] text-xs space-y-1 font-mono">
+          <div className="text-[#94A3B8] flex items-center justify-between">
+            <span className="flex items-center gap-1.5 font-bold text-[#F1F5F9]">
+              <Navigation className="w-3.5 h-3.5 text-[#16B9E8]" /> PATROL SECTOR
+            </span>
+            <span className="text-[#16B9E8] font-bold">{activeDrone.assignedArea}</span>
+          </div>
+          <div className="text-[11px] text-[#94A3B8] pt-0.5">
+            GPS: {activeDrone.lat.toFixed(4)}° N, {activeDrone.lng.toFixed(4)}° E | Altitude: {activeDrone.altitude}m | Speed: {activeDrone.speedKmH} km/h
+          </div>
+        </div>
+
+        {/* Telemetry Progress Bars */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-mono">
+          {/* Battery */}
+          <div className="bg-[#152535] p-3 rounded-lg border border-[#152535]">
+            <div className="flex items-center justify-between text-[#94A3B8] mb-1.5 text-[11px]">
+              <span className="flex items-center gap-1 font-bold text-[#F1F5F9]">
+                <Battery className="w-4 h-4 text-[#22C55E]" /> Battery Charge
               </span>
+              <span className="font-extrabold text-[#22C55E] text-sm">{activeDrone.batteryPercent}%</span>
             </div>
-
-            {/* Location Sector */}
-            <div className="p-2.5 rounded-lg bg-[#05070B] border border-white/[0.06] text-xs space-y-1">
-              <div className="text-slate-400 flex items-center justify-between">
-                <span className="flex items-center gap-1.5 font-bold text-slate-300">
-                  <Navigation className="w-3 h-3 text-cyan-400" /> SECTOR
-                </span>
-                <span className="text-cyan-300 font-bold">{drone.assignedArea}</span>
-              </div>
-              <div className="text-[10px] text-slate-500">
-                GPS: {drone.lat.toFixed(4)}° N, {drone.lng.toFixed(4)}° E | Alt: {drone.altitude}m
-              </div>
-            </div>
-
-            {/* Telemetry Progress Bars */}
-            <div className="space-y-2 text-xs">
-              {/* Battery */}
-              <div>
-                <div className="flex items-center justify-between text-slate-400 mb-1 text-[11px]">
-                  <span className="flex items-center gap-1">
-                    <Battery className="w-3 h-3 text-emerald-400" /> Battery Charge
-                  </span>
-                  <span className="font-bold text-slate-100">{drone.batteryPercent}%</span>
-                </div>
-                <div className="w-full bg-[#05070B] h-1.5 rounded overflow-hidden border border-white/[0.06]">
-                  <div
-                    className="bg-emerald-400 h-full rounded transition-all"
-                    style={{ width: `${drone.batteryPercent}%` }}
-                  />
-                </div>
-              </div>
-
-              {/* Rotor Health */}
-              <div>
-                <div className="flex items-center justify-between text-slate-400 mb-1 text-[11px]">
-                  <span className="flex items-center gap-1">
-                    <ShieldCheck className="w-3 h-3 text-cyan-400" /> Motor Diagnostics
-                  </span>
-                  <span className="font-bold text-slate-100">{drone.rotorHealth}%</span>
-                </div>
-                <div className="w-full bg-[#05070B] h-1.5 rounded overflow-hidden border border-white/[0.06]">
-                  <div
-                    className="bg-cyan-400 h-full rounded transition-all"
-                    style={{ width: `${drone.rotorHealth}%` }}
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Service metadata */}
-            <div className="pt-2 border-t border-white/[0.06] flex items-center justify-between text-[10px] text-slate-400">
-              <span>NEXT DUE: <strong className="text-slate-200">{drone.nextServiceDue}</strong></span>
-              <span>FLIGHT HOURS: <strong className="text-slate-200">{drone.totalFlightHours}h</strong></span>
+            <div className="w-full bg-[#08111A] h-2 rounded overflow-hidden border border-[#152535]">
+              <div
+                className="bg-[#22C55E] h-full rounded transition-all"
+                style={{ width: `${activeDrone.batteryPercent}%` }}
+              />
             </div>
           </div>
-        ))}
+
+          {/* Rotor Health */}
+          <div className="bg-[#152535] p-3 rounded-lg border border-[#152535]">
+            <div className="flex items-center justify-between text-[#94A3B8] mb-1.5 text-[11px]">
+              <span className="flex items-center gap-1 font-bold text-[#F1F5F9]">
+                <ShieldCheck className="w-4 h-4 text-[#16B9E8]" /> Motor Diagnostics
+              </span>
+              <span className="font-extrabold text-[#16B9E8] text-sm">{activeDrone.rotorHealth}%</span>
+            </div>
+            <div className="w-full bg-[#08111A] h-2 rounded overflow-hidden border border-[#152535]">
+              <div
+                className="bg-[#16B9E8] h-full rounded transition-all"
+                style={{ width: `${activeDrone.rotorHealth}%` }}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Service metadata */}
+        <div className="pt-2 border-t border-[#152535] flex items-center justify-between text-xs text-[#94A3B8] font-mono">
+          <span>NEXT SERVICING DUE: <strong className="text-[#F1F5F9]">{activeDrone.nextServiceDue}</strong></span>
+          <span>TOTAL FLIGHT HOURS: <strong className="text-[#F1F5F9]">{activeDrone.totalFlightHours}h</strong></span>
+        </div>
       </div>
 
       {/* Service Maintenance History */}
-      <div className="glass-panel p-4 rounded-xl border border-white/[0.08] bg-[#0A0F17]/90 space-y-3">
-        <h3 className="text-xs font-bold text-slate-100 uppercase tracking-wider flex items-center gap-2">
-          <Wrench className="w-3.5 h-3.5 text-cyan-400" />
+      <div className="glass-panel p-4 rounded-xl border border-[#152535] bg-[#101C28] space-y-3 font-sans">
+        <h3 className="text-xs font-bold text-[#F1F5F9] uppercase tracking-wider flex items-center gap-2 font-mono">
+          <Wrench className="w-3.5 h-3.5 text-[#16B9E8]" />
           MAINTENANCE & AVIONICS SERVICING TICKETS
         </h3>
 
-        <div className="space-y-2">
+        <div className="space-y-2 font-mono text-xs">
           {serviceLogs.map((log) => (
             <div
               key={log.id}
-              className="p-3 rounded-lg bg-[#05070B] border border-white/[0.06] flex flex-col md:flex-row items-start md:items-center justify-between gap-3 text-xs"
+              className="p-3 rounded-lg bg-[#152535] border border-[#152535] flex flex-col md:flex-row items-start md:items-center justify-between gap-3 text-xs"
             >
               <div className="space-y-1">
                 <div className="flex items-center space-x-2">
-                  <span className="font-bold text-slate-100 font-sans">{log.droneName}</span>
-                  <span className="px-1.5 py-0.5 rounded bg-[#0A0F17] text-cyan-400 font-bold text-[10px] border border-cyan-500/20">
+                  <span className="font-bold text-[#F1F5F9] font-sans">{log.droneName}</span>
+                  <span className="px-1.5 py-0.5 rounded bg-[#101C28] text-[#16B9E8] font-bold text-[10px] border border-[#16B9E8]/20">
                     {log.id}
                   </span>
                 </div>
-                <div className="text-slate-300 font-semibold">{log.serviceType}</div>
-                <div className="text-slate-400 text-[11px] font-sans">{log.notes}</div>
+                <div className="text-[#F1F5F9] font-semibold">{log.serviceType}</div>
+                <div className="text-[#94A3B8] text-[11px] font-sans">{log.notes}</div>
               </div>
 
               <div className="flex items-center space-x-4 text-right">
                 <div>
-                  <div className="text-slate-400 text-[11px]">COST: <strong className="text-slate-200">{log.cost}</strong></div>
-                  <div className="text-slate-500 text-[10px]">TECH: {log.technician}</div>
+                  <div className="text-[#94A3B8] text-[11px]">COST: <strong className="text-[#F1F5F9]">{log.cost}</strong></div>
+                  <div className="text-[#64748B] text-[10px]">TECH: {log.technician}</div>
                 </div>
-                <span className="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-bold text-[10px]">
+                <span className="px-2 py-0.5 rounded bg-[#22C55E]/10 text-[#22C55E] border border-[#22C55E]/30 font-bold text-[10px]">
                   {log.status}
                 </span>
               </div>
@@ -262,34 +230,31 @@ export const DroneFleetServicing: React.FC = () => {
 
       {/* Schedule Service Modal */}
       {showBookModal && (
-        <div className="fixed inset-0 z-50 bg-[#05070B]/85 backdrop-blur-xl flex items-center justify-center p-4">
-          <div className="glass-panel p-5 rounded-xl border border-cyan-500/30 bg-[#0A0F17] max-w-md w-full space-y-4 shadow-2xl hud-border">
-            <h3 className="text-sm font-extrabold text-slate-100 uppercase tracking-wider flex items-center gap-2">
-              <Wrench className="w-4 h-4 text-cyan-400" />
+        <div className="fixed inset-0 z-50 bg-[#08111A]/85 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="glass-panel p-5 rounded-xl border border-[#16B9E8]/30 bg-[#101C28] max-w-md w-full space-y-4 shadow-2xl hud-border font-sans">
+            <h3 className="text-sm font-extrabold text-[#F1F5F9] uppercase tracking-wider flex items-center gap-2 font-mono">
+              <Wrench className="w-4 h-4 text-[#16B9E8]" />
               SCHEDULE DRONE SERVICING TICKET
             </h3>
 
-            <form onSubmit={handleBookService} className="space-y-3 text-xs">
+            <form onSubmit={handleBookService} className="space-y-3 text-xs font-mono">
               <div>
-                <label className="block text-slate-400 mb-1 font-bold">SELECT DRONE UNIT</label>
-                <select
-                  value={selectedDroneForService}
-                  onChange={(e) => setSelectedDroneForService(e.target.value)}
-                  className="w-full p-2 rounded-lg bg-[#05070B] border border-white/[0.08] text-slate-100 focus:outline-none focus:border-cyan-500"
-                >
-                  {drones.map(d => (
-                    <option key={d.id} value={d.id}>{d.name} ({d.id})</option>
-                  ))}
-                </select>
+                <label className="block text-[#94A3B8] mb-1 font-bold">DRONE UNIT</label>
+                <input
+                  type="text"
+                  disabled
+                  value="SkyGuardian-X1 (DRONE-PUNE-01)"
+                  className="w-full p-2.5 rounded-lg bg-[#152535] border border-[#152535] text-[#F1F5F9] font-bold"
+                />
               </div>
 
               <div>
-                <label className="block text-slate-400 mb-1 font-bold">SERVICING TYPE</label>
+                <label className="block text-[#94A3B8] mb-1 font-bold">SERVICING TYPE</label>
                 <input
                   type="text"
                   value={serviceTypeInput}
                   onChange={(e) => setServiceTypeInput(e.target.value)}
-                  className="w-full p-2 rounded-lg bg-[#05070B] border border-white/[0.08] text-slate-100 focus:outline-none focus:border-cyan-500"
+                  className="w-full p-2.5 rounded-lg bg-[#08111A] border border-[#152535] text-[#F1F5F9] focus:outline-none focus:border-[#16B9E8]"
                   placeholder="e.g. Rotor Bearing Replacement & Sensor Calibration"
                 />
               </div>
@@ -298,13 +263,13 @@ export const DroneFleetServicing: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setShowBookModal(false)}
-                  className="px-3 py-1.5 rounded-lg bg-[#05070B] text-slate-300 hover:text-white font-bold border border-white/[0.08]"
+                  className="px-3.5 py-1.5 rounded-lg bg-[#08111A] text-[#94A3B8] hover:text-[#F1F5F9] font-bold border border-[#152535]"
                 >
                   CANCEL
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-1.5 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-aerospace-950 font-extrabold"
+                  className="px-4 py-1.5 rounded-lg bg-[#16B9E8] hover:bg-[#38CBF3] text-[#08111A] font-extrabold"
                 >
                   BOOK TICKET
                 </button>
@@ -316,4 +281,5 @@ export const DroneFleetServicing: React.FC = () => {
     </div>
   );
 };
+
 
