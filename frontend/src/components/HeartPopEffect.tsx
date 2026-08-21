@@ -4,35 +4,46 @@ interface HeartParticle {
   id: number;
   x: number;
   y: number;
+  tx: number;
+  ty: number;
   emoji: string;
+  size: number;
 }
 
 export const HeartPopEffect: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [hearts, setHearts] = useState<HeartParticle[]>([]);
 
   useEffect(() => {
-    const handleGlobalClick = (e: MouseEvent) => {
-      // Trigger whenever user clicks any button, link, tab, or interactive element
-      const target = e.target as HTMLElement | null;
-      const isInteractive = target?.closest('button, a, select, input, [role="button"], .interactive-click');
+    const emojis = ['❤️', '💖', '💕', '💗', '💓', '💞', '❤️‍🔥', '🌸'];
 
-      if (isInteractive || target?.tagName === 'BUTTON' || target?.tagName === 'A') {
-        const emojis = ['❤️', '💖', '💕', '💗', '❤️‍🔥'];
+    const handlePointerDown = (e: MouseEvent) => {
+      // Spawn 5 to 7 hearts bursting outwards around click location
+      const count = 6;
+      const newBurst: HeartParticle[] = [];
+
+      for (let i = 0; i < count; i++) {
+        const angle = (Math.PI * 2 * i) / count + (Math.random() * 0.4 - 0.2);
+        const distance = 40 + Math.random() * 50;
+        const tx = Math.cos(angle) * distance;
+        const ty = Math.sin(angle) * distance - 30; // Float upwards
         const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
 
-        const newHeart: HeartParticle = {
-          id: Date.now() + Math.random(),
+        newBurst.push({
+          id: Date.now() + Math.random() + i,
           x: e.clientX,
           y: e.clientY,
+          tx,
+          ty,
           emoji: randomEmoji,
-        };
-
-        setHearts((prev) => [...prev.slice(-15), newHeart]);
+          size: 20 + Math.floor(Math.random() * 16),
+        });
       }
+
+      setHearts((prev) => [...prev.slice(-30), ...newBurst]);
     };
 
-    window.addEventListener('click', handleGlobalClick);
-    return () => window.removeEventListener('click', handleGlobalClick);
+    window.addEventListener('pointerdown', handlePointerDown, { capture: true });
+    return () => window.removeEventListener('pointerdown', handlePointerDown, { capture: true });
   }, []);
 
   const handleAnimationEnd = (id: number) => {
@@ -49,7 +60,10 @@ export const HeartPopEffect: React.FC<{ children: React.ReactNode }> = ({ childr
           style={{
             left: `${heart.x}px`,
             top: `${heart.y}px`,
-          }}
+            fontSize: `${heart.size}px`,
+            '--tx': `${heart.tx}px`,
+            '--ty': `${heart.ty}px`,
+          } as React.CSSProperties}
           onAnimationEnd={() => handleAnimationEnd(heart.id)}
         >
           {heart.emoji}

@@ -41,27 +41,28 @@
   }
 }
 
-@keyframes floatHeart {
+@keyframes floatHeartBurst {
   0% {
     opacity: 1;
-    transform: translate(-50%, -50%) scale(0.6) translateY(0);
+    transform: translate(-50%, -50%) scale(0.3) translate(0, 0);
   }
-  50% {
-    opacity: 0.9;
-    transform: translate(-50%, -50%) scale(1.2) translateY(-30px);
+  30% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.4) translate(var(--tx, 0px), var(--ty, -20px));
   }
   100% {
     opacity: 0;
-    transform: translate(-50%, -50%) scale(1.5) translateY(-60px);
+    transform: translate(-50%, -50%) scale(1.8) translate(calc(var(--tx, 0px) * 1.5), calc(var(--ty, -50px) - 50px));
   }
 }
 
 .animate-heart-pop {
   position: fixed;
   pointer-events: none;
-  z-index: 9999;
-  font-size: 20px;
-  animation: floatHeart 0.8s ease-out forwards;
+  z-index: 99999;
+  font-size: 26px;
+  filter: drop-shadow(0 2px 8px rgba(225, 29, 72, 0.4));
+  animation: floatHeartBurst 1.0s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
 /* Tactical Pink Scrollbar */

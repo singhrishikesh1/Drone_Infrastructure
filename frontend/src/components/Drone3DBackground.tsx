@@ -10,7 +10,7 @@ export const Drone3DBackground: React.FC = () => {
 
     // Scene setup
     const scene = new THREE.Scene();
-    scene.fog = new THREE.FogExp2(0x05070B, 0.028);
+    scene.fog = new THREE.FogExp2(0xFDF2F8, 0.025);
 
     // Camera setup
     const camera = new THREE.PerspectiveCamera(
@@ -25,120 +25,120 @@ export const Drone3DBackground: React.FC = () => {
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.setClearColor(0x05070B, 0.5);
+    renderer.setClearColor(0xFDF2F8, 0.3);
     container.appendChild(renderer.domElement);
 
-    // Lighting System
-    const ambientLight = new THREE.AmbientLight(0x0a1526, 0.6);
+    // Lighting System (Soft White & Vibrant Hot Pink accents)
+    const ambientLight = new THREE.AmbientLight(0xFFF1F2, 1.4);
     scene.add(ambientLight);
 
-    // Directional rim light (Cyan accent)
-    const rimLight = new THREE.DirectionalLight(0x00f3ff, 1.5);
+    // Directional rim light (Hot Pink accent)
+    const rimLight = new THREE.DirectionalLight(0xE11D48, 2.2);
     rimLight.position.set(-6, 8, 4);
     scene.add(rimLight);
 
-    // Key Light (Subtle White/Cool)
-    const keyLight = new THREE.DirectionalLight(0x94a3b8, 0.8);
+    // Key Light (Soft Warm White)
+    const keyLight = new THREE.DirectionalLight(0xFFFFFF, 1.2);
     keyLight.position.set(6, 10, 6);
     scene.add(keyLight);
 
-    // Underbody Sensor Point Light
-    const sensorLight = new THREE.PointLight(0x00f3ff, 2.5, 12);
+    // Underbody Sensor Point Light (Hot Pink)
+    const sensorLight = new THREE.PointLight(0xF472B6, 3.0, 14);
     sensorLight.position.set(0, -0.2, 0);
     scene.add(sensorLight);
 
     // ----------------------------------------------------
-    // Build Realistic Matte Black Industrial Drone Model
+    // Build Sleek White & Pink Futuristic Drone Model
     // ----------------------------------------------------
     const droneGroup = new THREE.Group();
 
-    // Central Carbon Fiber Chassis Core
+    // Central Glossy White Chassis Core
     const bodyGeo = new THREE.BoxGeometry(1.4, 0.3, 1.4);
-    const matteCarbonMat = new THREE.MeshStandardMaterial({
-      color: 0x0c1017,
-      metalness: 0.85,
-      roughness: 0.25,
+    const whiteChassisMat = new THREE.MeshStandardMaterial({
+      color: 0xFFFFFF,
+      metalness: 0.2,
+      roughness: 0.1,
     });
-    const bodyMesh = new THREE.Mesh(bodyGeo, matteCarbonMat);
+    const bodyMesh = new THREE.Mesh(bodyGeo, whiteChassisMat);
     droneGroup.add(bodyMesh);
 
-    // Top Avionics Plate
+    // Top Avionics Plate (Hot Pink Accent)
     const topPlateGeo = new THREE.BoxGeometry(1.0, 0.1, 1.0);
     const topPlateMat = new THREE.MeshStandardMaterial({
-      color: 0x141b26,
-      metalness: 0.9,
+      color: 0xE11D48,
+      metalness: 0.5,
       roughness: 0.2,
     });
     const topPlateMesh = new THREE.Mesh(topPlateGeo, topPlateMat);
     topPlateMesh.position.y = 0.2;
     droneGroup.add(topPlateMesh);
 
-    // Glowing Optical Sensor Pod (Underneath)
+    // Glowing Pink Optical Sensor Pod (Underneath)
     const sensorGeo = new THREE.SphereGeometry(0.28, 24, 24);
     const sensorMat = new THREE.MeshPhysicalMaterial({
-      color: 0x05070B,
+      color: 0xFFF1F2,
       roughness: 0.1,
       transmission: 0.6,
       thickness: 0.5,
-      emissive: 0x00f3ff,
-      emissiveIntensity: 0.4
+      emissive: 0xF472B6,
+      emissiveIntensity: 0.8
     });
     const sensorMesh = new THREE.Mesh(sensorGeo, sensorMat);
     sensorMesh.position.set(0, -0.22, 0.2);
     droneGroup.add(sensorMesh);
 
-    // Front Camera Lens Ring (Cyan)
+    // Front Camera Lens Ring (Hot Pink)
     const lensRingGeo = new THREE.TorusGeometry(0.16, 0.03, 16, 32);
-    const lensRingMat = new THREE.MeshBasicMaterial({ color: 0x00f3ff });
+    const lensRingMat = new THREE.MeshBasicMaterial({ color: 0xE11D48 });
     const lensRingMesh = new THREE.Mesh(lensRingGeo, lensRingMat);
     lensRingMesh.position.set(0, -0.22, 0.48);
     droneGroup.add(lensRingMesh);
 
-    // 4 Carbon Arms & Motor Pods
+    // 4 White & Pink Arms & Motor Pods
     const armAngles = [Math.PI / 4, (3 * Math.PI) / 4, (5 * Math.PI) / 4, (7 * Math.PI) / 4];
     const rotors: THREE.Mesh[] = [];
     const rotorDiscs: THREE.Mesh[] = [];
     const armDist = 1.35;
 
     armAngles.forEach((angle, index) => {
-      // Carbon arm shaft
+      // White Arm Shaft
       const armGeo = new THREE.CylinderGeometry(0.065, 0.065, armDist * 1.8);
-      const armMat = new THREE.MeshStandardMaterial({ color: 0x111622, metalness: 0.9, roughness: 0.3 });
+      const armMat = new THREE.MeshStandardMaterial({ color: 0xFFFFFF, metalness: 0.3, roughness: 0.2 });
       const armMesh = new THREE.Mesh(armGeo, armMat);
       armMesh.rotation.z = Math.PI / 2;
       armMesh.rotation.y = angle;
       droneGroup.add(armMesh);
 
-      // Motor Housing
+      // Motor Housing (Hot Pink / Rose)
       const motorGeo = new THREE.CylinderGeometry(0.22, 0.22, 0.3, 24);
-      const motorMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.95 });
+      const motorMat = new THREE.MeshStandardMaterial({ color: 0xE11D48, metalness: 0.6, roughness: 0.3 });
       const motorMesh = new THREE.Mesh(motorGeo, motorMat);
       const posX = Math.cos(angle) * armDist;
       const posZ = Math.sin(angle) * armDist;
       motorMesh.position.set(posX, 0.12, posZ);
       droneGroup.add(motorMesh);
 
-      // Arm End Cyan LED Beacon
-      const ledGeo = new THREE.SphereGeometry(0.06, 12, 12);
-      const ledMat = new THREE.MeshBasicMaterial({ color: index < 2 ? 0x00f3ff : 0xa855f7 });
+      // Arm End Pink LED Beacon
+      const ledGeo = new THREE.SphereGeometry(0.08, 12, 12);
+      const ledMat = new THREE.MeshBasicMaterial({ color: index < 2 ? 0xE11D48 : 0xF472B6 });
       const ledMesh = new THREE.Mesh(ledGeo, ledMat);
       ledMesh.position.set(posX, -0.08, posZ);
       droneGroup.add(ledMesh);
 
-      // Rotor Blade Assembly (Dual Blade)
+      // Rotor Blade Assembly (White Dual Blade)
       const bladeGeo = new THREE.BoxGeometry(1.2, 0.015, 0.09);
-      const bladeMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.2, metalness: 0.8 });
+      const bladeMat = new THREE.MeshStandardMaterial({ color: 0xFFFFFF, roughness: 0.1, metalness: 0.2 });
       const bladeMesh = new THREE.Mesh(bladeGeo, bladeMat);
       bladeMesh.position.set(posX, 0.29, posZ);
       droneGroup.add(bladeMesh);
       rotors.push(bladeMesh);
 
-      // Translucent Motion Blur Disc
+      // Translucent Pink Motion Blur Disc
       const discGeo = new THREE.CylinderGeometry(0.62, 0.62, 0.005, 32);
       const discMat = new THREE.MeshBasicMaterial({
-        color: 0x00f3ff,
+        color: 0xF472B6,
         transparent: true,
-        opacity: 0.12,
+        opacity: 0.25,
         side: THREE.DoubleSide
       });
       const discMesh = new THREE.Mesh(discGeo, discMat);
@@ -148,13 +148,13 @@ export const Drone3DBackground: React.FC = () => {
     });
 
     // ----------------------------------------------------
-    // Downward LiDAR Laser Scanning Beam (Conical Grid)
+    // Downward Pink Laser Scanning Beam (Conical Grid)
     // ----------------------------------------------------
     const coneGeo = new THREE.ConeGeometry(3.5, 6, 32, 1, true);
     const coneMat = new THREE.MeshBasicMaterial({
-      color: 0x00f3ff,
+      color: 0xF472B6,
       transparent: true,
-      opacity: 0.08,
+      opacity: 0.12,
       wireframe: true,
       side: THREE.DoubleSide
     });
@@ -165,22 +165,22 @@ export const Drone3DBackground: React.FC = () => {
     scene.add(droneGroup);
 
     // ----------------------------------------------------
-    // Topographic Wireframe Ground Grid & Particle Field
+    // Topographic Soft Pink Wireframe Ground Grid & Particle Field
     // ----------------------------------------------------
     const gridGeo = new THREE.PlaneGeometry(50, 50, 40, 40);
     const gridMat = new THREE.MeshBasicMaterial({
-      color: 0x00f3ff,
+      color: 0xFBCFE8,
       wireframe: true,
       transparent: true,
-      opacity: 0.07
+      opacity: 0.25
     });
     const gridMesh = new THREE.Mesh(gridGeo, gridMat);
     gridMesh.rotation.x = -Math.PI / 2;
     gridMesh.position.y = -3.8;
     scene.add(gridMesh);
 
-    // Floating Particles Starfield
-    const particleCount = 350;
+    // Floating Pink & Red Hearts/Particles Field
+    const particleCount = 400;
     const particlesGeo = new THREE.BufferGeometry();
     const posArray = new Float32Array(particleCount * 3);
 
@@ -192,10 +192,10 @@ export const Drone3DBackground: React.FC = () => {
 
     particlesGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
     const particlesMat = new THREE.PointsMaterial({
-      size: 0.05,
-      color: 0x38bdf8,
+      size: 0.08,
+      color: 0xE11D48,
       transparent: true,
-      opacity: 0.4
+      opacity: 0.5
     });
     const particlePoints = new THREE.Points(particlesGeo, particlesMat);
     scene.add(particlePoints);

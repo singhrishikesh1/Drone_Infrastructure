@@ -75,8 +75,8 @@ export const GoogleMapView: React.FC<MapViewProps> = ({
       attributionControl: false
     }).setView([18.5520, 73.9400], 13);
 
-    // CartoDB Dark tiles with Google Maps Road Network aesthetics
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    // CartoDB Voyager Light tiles
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
       maxZoom: 19,
       subdomains: 'abcd'
     }).addTo(map);
@@ -104,18 +104,16 @@ export const GoogleMapView: React.FC<MapViewProps> = ({
     });
 
     filteredDefects.forEach((defect) => {
-      let pinColor = '#22C55E'; // Green
-      if (defect.riskLevel === 'CRITICAL') pinColor = '#EF4444'; // Red
-      else if (defect.riskLevel === 'HIGH' || defect.riskLevel === 'MEDIUM') pinColor = '#F59E0B'; // Orange
+      let pinColor = '#16A34A'; // Green
+      if (defect.riskLevel === 'CRITICAL') pinColor = '#E11D48'; // Red
+      else if (defect.riskLevel === 'HIGH' || defect.riskLevel === 'MEDIUM') pinColor = '#D97706'; // Amber
 
       const customIcon = L.divIcon({
         className: 'pune-map-pin',
         html: `
           <div style="position: relative; display: flex; align-items: center; justify-content: center;">
             <div style="position: absolute; width: 32px; height: 32px; border-radius: 50%; background-color: ${pinColor}; opacity: 0.25;"></div>
-            <div style="position: relative; width: 24px; height: 24px; border-radius: 50%; background-color: #101C28; border: 2px solid ${pinColor}; display: flex; align-items: center; justify-content: center; color: ${pinColor}; font-weight: 800; font-family: 'JetBrains Mono', monospace; font-size: 10px;">
-              ${defect.riskScore || 90}
-            </div>
+            <div style="width: 14px; height: 14px; border-radius: 50%; background-color: ${pinColor}; border: 2.5px solid #FFFFFF; box-shadow: 0 2px 8px rgba(0,0,0,0.2);"></div>
           </div>
         `,
         iconSize: [32, 32],
@@ -123,28 +121,7 @@ export const GoogleMapView: React.FC<MapViewProps> = ({
       });
 
       const marker = L.marker([defect.lat, defect.lng], { icon: customIcon }).addTo(map);
-
-      const popupHtml = `
-        <div style="font-family: 'Inter', sans-serif; background: #101C28; color: #F1F5F9; padding: 10px; border-radius: 8px; border: 1px solid #152535; max-width: 220px;">
-          <div style="font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 800; color: ${pinColor}; text-transform: uppercase;">
-            ${defect.riskLevel} RISK (${defect.riskScore}/100)
-          </div>
-          <div style="font-size: 12px; font-weight: 700; margin-top: 3px;">
-            ${defect.title}
-          </div>
-          <div style="font-size: 10px; color: #94A3B8; margin-top: 4px;">
-            📍 ${defect.locationName}
-          </div>
-          <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; color: #16B9E8; margin-top: 6px;">
-            Est. Repair: ₹${defect.costEstimation?.total_estimated_cost?.toLocaleString()}
-          </div>
-        </div>
-      `;
-
-      marker.bindPopup(popupHtml);
-      marker.on('click', () => {
-        onSelectDefect(defect);
-      });
+      marker.on('click', () => onSelectDefect(defect));
     });
 
     if (selectedDefect && map) {
@@ -152,7 +129,7 @@ export const GoogleMapView: React.FC<MapViewProps> = ({
     }
   }, [defects, selectedDefect, activeAssetFilter, activeLocationFilter]);
 
-  // Render Cyan Road Patrol Corridor
+  // Render Red/Pink Road Patrol Corridor
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
@@ -162,10 +139,10 @@ export const GoogleMapView: React.FC<MapViewProps> = ({
     }
 
     const polyline = L.polyline(ACTIVE_DRONE.roadCorridor, {
-      color: '#16B9E8',
-      weight: 3,
+      color: '#E11D48',
+      weight: 3.5,
       dashArray: '6, 8',
-      opacity: 0.8
+      opacity: 0.9
     }).addTo(map);
 
     roadPolylineRef.current = polyline;
@@ -188,27 +165,27 @@ export const GoogleMapView: React.FC<MapViewProps> = ({
       return `
         <div style="position: relative; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;">
           <!-- Radar Aura -->
-          <div style="position: absolute; width: 36px; height: 36px; border-radius: 50%; border: 1.5px solid #16B9E8; opacity: 0.3;"></div>
+          <div style="position: absolute; width: 36px; height: 36px; border-radius: 50%; border: 1.5px solid #E11D48; opacity: 0.3;"></div>
 
           <!-- Quadcopter Body -->
           <div style="transform: rotate(${headingAngle.toFixed(1)}deg); position: relative; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">
-            <div class="animate-spin-fast" style="position: absolute; top: 0; left: 0; width: 8px; height: 8px; border-radius: 50%; border: 1.5px solid #16B9E8;"></div>
-            <div class="animate-spin-fast" style="position: absolute; top: 0; right: 0; width: 8px; height: 8px; border-radius: 50%; border: 1.5px solid #16B9E8;"></div>
-            <div class="animate-spin-fast" style="position: absolute; bottom: 0; left: 0; width: 8px; height: 8px; border-radius: 50%; border: 1.5px solid #16B9E8;"></div>
-            <div class="animate-spin-fast" style="position: absolute; bottom: 0; right: 0; width: 8px; height: 8px; border-radius: 50%; border: 1.5px solid #16B9E8;"></div>
+            <div class="animate-spin-fast" style="position: absolute; top: 0; left: 0; width: 8px; height: 8px; border-radius: 50%; border: 1.5px solid #E11D48;"></div>
+            <div class="animate-spin-fast" style="position: absolute; top: 0; right: 0; width: 8px; height: 8px; border-radius: 50%; border: 1.5px solid #E11D48;"></div>
+            <div class="animate-spin-fast" style="position: absolute; bottom: 0; left: 0; width: 8px; height: 8px; border-radius: 50%; border: 1.5px solid #E11D48;"></div>
+            <div class="animate-spin-fast" style="position: absolute; bottom: 0; right: 0; width: 8px; height: 8px; border-radius: 50%; border: 1.5px solid #E11D48;"></div>
 
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#16B9E8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#E11D48" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
               <line x1="4" y1="4" x2="20" y2="20" stroke-opacity="0.6"/>
               <line x1="20" y1="4" x2="4" y2="20" stroke-opacity="0.6"/>
-              <circle cx="12" cy="12" r="4" fill="#101C28" stroke="#16B9E8" stroke-width="2"/>
-              <polygon points="12,4 8,10 16,10" fill="#16B9E8"/>
+              <circle cx="12" cy="12" r="4" fill="#FFFFFF" stroke="#E11D48" stroke-width="2"/>
+              <polygon points="12,4 8,10 16,10" fill="#E11D48"/>
             </svg>
           </div>
 
           <!-- Callsign Tag Badge -->
-          <div style="position: absolute; top: -14px; white-space: nowrap; background: #101C28; border: 1px solid #16B9E8; color: #F1F5F9; font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 800; padding: 1px 6px; border-radius: 4px; display: flex; align-items: center; gap: 4px;">
-            <span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background-color: #22C55E;"></span>
-            ${ACTIVE_DRONE.callsign}
+          <div style="position: absolute; top: -14px; white-space: nowrap; background: #FFFFFF; border: 1px solid #E11D48; color: #831843; font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 800; padding: 1px 6px; border-radius: 4px; display: flex; align-items: center; gap: 4px; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">
+            <span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background-color: #16A34A;"></span>
+            ${ACTIVE_DRONE.callsign} 🧸
           </div>
         </div>
       `;
@@ -230,23 +207,23 @@ export const GoogleMapView: React.FC<MapViewProps> = ({
     (marker as any).isDroneMarker = true;
 
     const popupHtml = `
-      <div style="font-family: 'Inter', sans-serif; background: #101C28; color: #F1F5F9; padding: 10px; border-radius: 10px; border: 1px solid #16B9E8; max-width: 250px;">
-        <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 800; color: #16B9E8; display: flex; align-items: center; justify-content: space-between;">
-          <span>🛸 ${ACTIVE_DRONE.callsign}</span>
-          <span style="color: #22C55E; background: rgba(34,197,94,0.1); padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(34,197,94,0.3); font-size: 8px;">SNAPPED TO ROAD</span>
+      <div style="font-family: 'Inter', sans-serif; background: #FFFFFF; color: #831843; padding: 10px; border-radius: 12px; border: 1px solid #E11D48; max-width: 250px; box-shadow: 0 4px 16px rgba(225,29,72,0.15);">
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 800; color: #E11D48; display: flex; align-items: center; justify-content: space-between;">
+          <span>🛸 ${ACTIVE_DRONE.callsign} 🧸</span>
+          <span style="color: #16A34A; background: #DCFCE7; padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(22,163,74,0.3); font-size: 8px;">SNAPPED TO ROAD 💕</span>
         </div>
-        <div style="font-size: 12px; font-weight: 700; margin-top: 4px;">${ACTIVE_DRONE.name}</div>
-        <div style="font-size: 10px; color: #94A3B8; margin-top: 1px;">Model: ${ACTIVE_DRONE.model}</div>
+        <div style="font-size: 12px; font-weight: 800; margin-top: 4px; color: #831843;">${ACTIVE_DRONE.name}</div>
+        <div style="font-size: 10px; color: #9D174D; margin-top: 1px;">Model: ${ACTIVE_DRONE.model}</div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 8px; font-family: 'JetBrains Mono', monospace; font-size: 10px; background: #08111A; padding: 6px; border-radius: 6px; border: 1px solid #152535;">
-          <div><span style="color: #64748B;">ALTITUDE:</span> <strong style="color: #16B9E8;">${ACTIVE_DRONE.altitude}m</strong></div>
-          <div><span style="color: #64748B;">SPEED:</span> <strong style="color: #F1F5F9;">${ACTIVE_DRONE.speedKmH} km/h</strong></div>
-          <div><span style="color: #64748B;">BATTERY:</span> <strong style="color: #22C55E;">${ACTIVE_DRONE.battery}%</strong></div>
-          <div><span style="color: #64748B;">STATUS:</span> <strong style="color: #16B9E8;">PATROL</strong></div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 8px; font-family: 'JetBrains Mono', monospace; font-size: 10px; background: #FDF2F8; padding: 6px; border-radius: 6px; border: 1px solid #FBCFE8;">
+          <div><span style="color: #9D174D;">ALTITUDE:</span> <strong style="color: #E11D48;">${ACTIVE_DRONE.altitude}m</strong></div>
+          <div><span style="color: #9D174D;">SPEED:</span> <strong style="color: #831843;">${ACTIVE_DRONE.speedKmH} km/h</strong></div>
+          <div><span style="color: #9D174D;">BATTERY:</span> <strong style="color: #16A34A;">${ACTIVE_DRONE.battery}%</strong></div>
+          <div><span style="color: #9D174D;">STATUS:</span> <strong style="color: #E11D48;">PATROL</strong></div>
         </div>
 
-        <div style="font-size: 10px; color: #94A3B8; margin-top: 6px; font-family: 'JetBrains Mono', monospace;">
-          📍 Road Sector: <strong style="color: #F1F5F9;">${ACTIVE_DRONE.sector}</strong>
+        <div style="font-size: 10px; color: #9D174D; margin-top: 6px; font-family: 'JetBrains Mono', monospace;">
+          📍 Road Sector: <strong style="color: #831843;">${ACTIVE_DRONE.sector}</strong>
         </div>
       </div>
     `;
