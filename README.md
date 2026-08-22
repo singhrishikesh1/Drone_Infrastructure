@@ -9,4 +9,3 @@
 
 
 - Autonomous Drone Fleet Tracking**: Live GPS coordinates, battery charge levels, rotor health diagnostics, and assigned sector radars across **Pune, Maharashtra** (Viman Nagar, Kharadi, Wagholi, Hadapsar).
-- 3D 
