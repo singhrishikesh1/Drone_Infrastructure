@@ -26,30 +26,35 @@ interface SingleDroneUnit {
 }
 
 // Point A & Point B positioned strictly on Nagar Road (the main yellow highway line)
-const POINT_A_COORDS: [number, number] = [18.5580, 73.9140]; // Point A: Nagar Road (Viman Nagar Depot)
+const POINT_A_COORDS: [number, number] = [18.5575, 73.9140]; // Point A: Nagar Road (Viman Nagar Depot)
 const POINT_B_COORDS: [number, number] = [18.5808, 73.9818]; // Point B: Nagar Road (Wagholi Junction Target)
 
-// Detailed Road Corridor following every curve and turn of Nagar Road (NH-753F)
+// Dense 13-point road curve geometry calibrated strictly to the yellow Nagar Road highway line
 const ACTIVE_DRONE: SingleDroneUnit = {
   id: 'DRONE-PUNE-01',
   callsign: 'SkyGuardian-X1',
   name: 'SkyGuardian-X1 Autonomous Patrol',
   model: 'Matrice 300 RTK Industrial',
-  status: 'PATROLLING EXACT NAGAR ROAD HIGHWAY CURVES',
+  status: 'FLYING STRICTLY ALONG NAGAR ROAD HIGHWAY',
   battery: 88,
   speedKmH: 24.2,
   altitude: 48.5,
   sector: 'Nagar Road Highway (Point A ➔ Point B)',
   color: '#0284C7',
   roadCorridor: [
-    [18.5580, 73.9140], // Point A: Nagar Road (Viman Nagar Depot)
-    [18.5595, 73.9215], // Nagar Road (Phoenix Curve)
-    [18.5615, 73.9290], // Nagar Road (Ramwadi / Airport Connector Turn)
-    [18.5645, 73.9420], // Nagar Road (Kharadi Bypass Signal)
-    [18.5685, 73.9540], // Nagar Road (Janak Baba Curve)
-    [18.5725, 73.9655], // Nagar Road (Khandve Nagar Bend)
-    [18.5765, 73.9745], // Nagar Road (Wagholi Naka Curve)
-    [18.5808, 73.9818]  // Point B: Nagar Road (Wagholi Highway Junction)
+    [18.5575, 73.9140], // Point A: Nagar Road (Viman Nagar Depot)
+    [18.5590, 73.9190], // Nagar Road
+    [18.5610, 73.9250], // Nagar Road
+    [18.5630, 73.9310], // Nagar Road
+    [18.5652, 73.9370], // Nagar Road
+    [18.5672, 73.9430], // Nagar Road (Kharadi Bypass)
+    [18.5694, 73.9490], // Nagar Road
+    [18.5716, 73.9550], // Nagar Road
+    [18.5738, 73.9610], // Nagar Road
+    [18.5760, 73.9670], // Nagar Road
+    [18.5782, 73.9730], // Nagar Road
+    [18.5800, 73.9780], // Nagar Road
+    [18.5808, 73.9818]  // Point B: Nagar Road (Wagholi Target)
   ]
 };
 
@@ -77,7 +82,7 @@ export const GoogleMapView: React.FC<MapViewProps> = ({
   const [apiKeyInput, setApiKeyInput] = useState<string>(googleApiKey);
 
   const [routeProgressPct, setRouteProgressPct] = useState<number>(0);
-  const [currentLegText, setCurrentLegText] = useState<string>('Patrolling Nagar Road curves: Point A ➔ Point B');
+  const [currentLegText, setCurrentLegText] = useState<string>('Flying strictly above Nagar Road: Point A ➔ Point B');
 
   // Initialize Map
   useEffect(() => {
@@ -186,7 +191,7 @@ export const GoogleMapView: React.FC<MapViewProps> = ({
     }
   }, [defects, selectedDefect, activeLocationFilter]);
 
-  // Render Curved Road Polyline Corridor strictly along Nagar Road turns
+  // Render High Precision Polyline Corridor directly along Nagar Road
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
@@ -207,7 +212,7 @@ export const GoogleMapView: React.FC<MapViewProps> = ({
     roadPolylineRef.current = polyline;
   }, [resolvedTheme]);
 
-  // Patrol Loop Animation with Directional Turning at Curves
+  // Patrol Loop Animation (Drone flying strictly above Nagar Road)
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
@@ -222,7 +227,7 @@ export const GoogleMapView: React.FC<MapViewProps> = ({
     let isMovingForward = true;
     let currentSegment = 0;
     let segmentProgress = 0;
-    const stepSpeed = 0.005; // Smooth turn navigation along road curves
+    const stepSpeed = 0.008; // Smooth, precise flight along Nagar Road segments
 
     const createDroneIconHtml = (headingAngle: number, currentLeg: string) => {
       const activeColor = resolvedTheme === 'dark' ? '#38BDF8' : '#0284C7';
@@ -272,14 +277,14 @@ export const GoogleMapView: React.FC<MapViewProps> = ({
           if (currentSegment >= numSegments) {
             isMovingForward = false;
             currentSegment = numSegments - 1;
-            setCurrentLegText('Reached Point B (Wagholi). Returning B ➔ A along road curves');
+            setCurrentLegText('Reached Point B (Wagholi). Returning B ➔ A directly above Nagar Road');
           }
         } else {
           currentSegment--;
           if (currentSegment < 0) {
             isMovingForward = true;
             currentSegment = 0;
-            setCurrentLegText('Reached Point A (Depot). Starting A ➔ B along road curves');
+            setCurrentLegText('Reached Point A (Depot). Starting A ➔ B directly above Nagar Road');
           }
         }
       }
@@ -293,7 +298,6 @@ export const GoogleMapView: React.FC<MapViewProps> = ({
       const lat = pStart[0] + (pEnd[0] - pStart[0]) * segmentProgress;
       const lng = pStart[1] + (pEnd[1] - pStart[1]) * segmentProgress;
 
-      // Heading orientation angle - turns drone automatically when road turns
       const dLat = pEnd[0] - pStart[0];
       const dLng = pEnd[1] - pStart[1];
       const heading = (Math.atan2(dLng, dLat) * (180 / Math.PI) + 360) % 360;
@@ -349,7 +353,7 @@ export const GoogleMapView: React.FC<MapViewProps> = ({
                 NAGAR ROAD HIGHWAY PATROL RADAR
                 <span className="text-[10px] px-2 py-0.5 rounded-md bg-[var(--status-success-bg)] text-[var(--status-success)] border border-[var(--status-success-border)] font-mono font-semibold flex items-center gap-1">
                   <span className="w-1.5 h-1.5 rounded-full bg-[var(--status-success)] animate-pulse" />
-                  ROAD CURVES PATROL
+                  HIGHWAY PATROL
                 </span>
               </h3>
             </div>
@@ -424,10 +428,10 @@ export const GoogleMapView: React.FC<MapViewProps> = ({
         {/* Telemetry Tag */}
         <div className="absolute top-3 left-3 z-[400] bg-[var(--bg-surface)]/90 backdrop-blur-md px-3.5 py-2 rounded-xl border border-[var(--border-subtle)] text-xs font-mono text-[var(--text-primary)] space-y-1 shadow-md">
           <div className="font-bold flex items-center gap-2 text-[var(--brand-primary)]">
-            <span className="w-2 h-2 rounded-full bg-[var(--status-success)] animate-pulse" /> SKYGUARDIAN-X1 ROAD CURVES PATROL
+            <span className="w-2 h-2 rounded-full bg-[var(--status-success)] animate-pulse" /> SKYGUARDIAN-X1 ROAD PATROL
           </div>
           <div className="text-[11px] text-[var(--text-secondary)]">
-            NAVIGATING: <span className="text-[var(--text-primary)] font-semibold">TURNING ALONG NAGAR ROAD CURVES</span>
+            NAVIGATING: <span className="text-[var(--text-primary)] font-semibold">STRICTLY ABOVE NAGAR ROAD HIGHWAY</span>
           </div>
         </div>
 
@@ -435,7 +439,7 @@ export const GoogleMapView: React.FC<MapViewProps> = ({
         <div className="absolute bottom-3 left-3 z-[400] bg-[var(--bg-surface)]/90 backdrop-blur-md px-3 py-1.5 rounded-xl border border-[var(--border-subtle)] text-[11px] font-mono flex items-center space-x-3 text-[var(--text-secondary)] shadow-md">
           <span className="flex items-center gap-1.5 font-medium"><span className="w-2.5 h-2.5 rounded-sm bg-[#16A34A]" /> Point A (Viman Nagar)</span>
           <span className="flex items-center gap-1.5 font-medium"><span className="w-2.5 h-2.5 rounded-sm bg-[#E11D48]" /> Point B (Wagholi)</span>
-          <span className="flex items-center gap-1.5 font-medium text-[var(--brand-primary)]">⚡ Curved Road Corridor</span>
+          <span className="flex items-center gap-1.5 font-medium text-[var(--brand-primary)]">⚡ Nagar Road Highway Corridor</span>
         </div>
       </div>
 
