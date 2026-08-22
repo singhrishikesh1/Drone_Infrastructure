@@ -9,4 +9,4 @@
 
 
 - Autonomous Drone Fleet Tracking**: Live GPS coordinates, battery charge levels, rotor health diagnostics, and assigned sector radars across **Pune, Maharashtra** (Viman Nagar, Kharadi, Wagholi, Hadapsar).
-- 3D Volumetric AI Defect Engine**: Calculates exact 3D defect volume ($m^3$), surface area ($m^2$), and max depth ($\text{cm}$)
+- 3D Volumetric AI Defect Engine**: Calculates exact 3D defect volume ($m^3$), surface area ($m^2$), and max depth 
