@@ -8,4 +8,4 @@
 ## Key Features
 
 
-- Autonomous Drone Fleet Tracking**: Live GPS coordinates, battery charge levels, rotor health diagnostics, and assigned sector radars across 
+- Autonomous Drone Fleet Tracking**: Live GPS coordinates, battery charge levels, rotor health diagnostics, and assigned sector radars 
