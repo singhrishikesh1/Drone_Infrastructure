@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plane, Cpu, Navigation, FileText, CheckCircle2, Database, Clock, ShieldAlert } from 'lucide-react';
+import { Plane, Cpu, Navigation, FileText, CheckCircle2, Clock, ShieldAlert } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle';
 
 export type TabType = 'telemetry' | 'drone' | 'defects' | 'reports' | 'redis';
@@ -41,7 +41,6 @@ export const Navbar: React.FC<NavbarProps> = ({
     { id: 'drone', label: 'DRONE', icon: Plane },
     { id: 'defects', label: 'DEFECTS', icon: CheckCircle2 },
     { id: 'reports', label: 'REPORTS', icon: FileText },
-    { id: 'redis', label: 'REDIS', icon: Database },
   ];
 
   return (
@@ -79,7 +78,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         </div>
       </div>
 
-      {/* Navigation Capsule Pill Bar (Matching requested UI) */}
+      {/* Navigation Capsule Pill Bar (Without REDIS tab) */}
       <nav className="flex items-center space-x-1.5 bg-[var(--bg-surface)] p-1.5 rounded-full border border-[var(--border-strong)] text-xs overflow-x-auto max-w-full font-sans shadow-sm">
         {navItems.map((item) => {
           const Icon = item.icon;

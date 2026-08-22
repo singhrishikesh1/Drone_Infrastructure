@@ -28,7 +28,7 @@ export interface Defect {
   id: string;
   title: string;
   assetName: string;
-  assetType: 'road' | 'bridge' | 'railway' | 'building';
+  assetType: 'road' | 'bridge';
   locationName: string;
   lat: number;
   lng: number;
@@ -57,8 +57,6 @@ export interface AnalyticsSummary {
   byAssetType: {
     road: number;
     bridge: number;
-    railway: number;
-    building: number;
   };
 }
 

@@ -29,14 +29,14 @@ export const DroneFleetServicing: React.FC = () => {
       setDrones([
         {
           id: "DRONE-PUNE-01",
-          name: "SkyGuardian-X1",
+          name: "Raisoni-Drone_P7",
           model: "Matrice 300 RTK Industrial",
           status: "FLYING",
-          assignedArea: "Pune Outer Ring Road Patrol Sector",
+          assignedArea: "Nagar Road Patrol Sector (Point A ➔ Point B)",
           lat: 18.5679,
           lng: 73.9143,
           altitude: 48.5,
-          speedKmH: 24.2,
+          speedKmH: 7.0,
           batteryPercent: 88,
           rotorHealth: 96,
           cameraStream: "HD Thermal + LiDAR Road Scan",
@@ -62,7 +62,7 @@ export const DroneFleetServicing: React.FC = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           droneId: 'DRONE-PUNE-01',
-          droneName: 'SkyGuardian-X1',
+          droneName: 'Raisoni-Drone_P7',
           serviceType: serviceTypeInput,
           notes: 'Routine preventative servicing ticket created.'
         })
@@ -70,14 +70,14 @@ export const DroneFleetServicing: React.FC = () => {
       const json = await res.json();
       if (json.success && json.data) {
         setServiceLogs(prev => [json.data, ...prev]);
-        addToast('success', 'Service Scheduled', `Ticket generated for SkyGuardian-X1: ${serviceTypeInput}`);
+        addToast('success', 'Service Scheduled', `Ticket generated for Raisoni-Drone_P7: ${serviceTypeInput}`);
         setShowBookModal(false);
       }
     } catch (err) {
       const mockRecord: ServiceRecord = {
         id: `SRV-${Math.floor(100 + Math.random() * 900)}`,
         droneId: 'DRONE-PUNE-01',
-        droneName: 'SkyGuardian-X1',
+        droneName: 'Raisoni-Drone_P7',
         serviceType: serviceTypeInput,
         date: new Date().toISOString().split('T')[0],
         technician: 'Senior Avionics Engineer',
@@ -93,14 +93,14 @@ export const DroneFleetServicing: React.FC = () => {
 
   const activeDrone = drones[0] || {
     id: "DRONE-PUNE-01",
-    name: "SkyGuardian-X1",
+    name: "Raisoni-Drone_P7",
     model: "Matrice 300 RTK Industrial",
     status: "FLYING",
-    assignedArea: "Pune Outer Ring Road Patrol Sector",
+    assignedArea: "Nagar Road Patrol Sector (Point A ➔ Point B)",
     lat: 18.5679,
     lng: 73.9143,
     altitude: 48.5,
-    speedKmH: 24.2,
+    speedKmH: 7.0,
     batteryPercent: 88,
     rotorHealth: 96,
     cameraStream: "HD Thermal + LiDAR Road Scan",

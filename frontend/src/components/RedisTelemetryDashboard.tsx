@@ -30,17 +30,16 @@ export const RedisTelemetryDashboard: React.FC = () => {
         connectedClients: 8,
         pubSubChannels: ['drone:telemetry:pune', 'drone:alerts:critical', 'drone:service:events'],
         recentKeys: [
-          { key: "drone:telemetry:pune:X1", type: "hash", ttl: 30, val: "{ lat: 18.5679, lng: 73.9143, alt: 48.5, batt: 88% }" },
-          { key: "drone:telemetry:pune:P2", type: "hash", ttl: 30, val: "{ lat: 18.5515, lng: 73.9348, alt: 38.0, batt: 74% }" },
-          { key: "drone:cache:analytics:summary", type: "string", ttl: 300, val: "{ totalInspections: 4, critical: 2, budget: 69,000 }" },
-          { key: "drone:events:stream", type: "stream", ttl: 86400, val: "XADD drone:events * defect DEF-1003 detected" }
+          { key: "drone:telemetry:pune:Raisoni-Drone_P7", type: "hash", ttl: 30, val: "{ lat: 18.5679, lng: 73.9143, speed: 7.0, batt: 88% }" },
+          { key: "drone:cache:analytics:summary", type: "string", ttl: 300, val: "{ totalInspections: 3, critical: 1, budget: 135,500 }" },
+          { key: "drone:events:stream", type: "stream", ttl: 86400, val: "XADD drone:events * defect DEF-PUNE-1001 detected" }
         ],
         telemetryStream: {
           channel: "drone:telemetry:pune",
           activePayload: {
             timestamp: new Date().toISOString(),
-            activeDronesCount: 3,
-            puneBoundCenter: { lat: 18.5204, lng: 73.8567 },
+            activeDronesCount: 1,
+            puneBoundCenter: { lat: 18.5680, lng: 73.9450 },
             packetsProcessed: 148290,
             cacheHitRatio: "99.4%"
           }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Wifi, Battery, Compass, Gauge, Radio, ShieldCheck, MapPin } from 'lucide-react';
+import { Wifi, Battery, Compass, Gauge, Radio, MapPin } from 'lucide-react';
 
 export const LiveTelemetryHUD: React.FC = () => {
   return (
@@ -13,7 +13,7 @@ export const LiveTelemetryHUD: React.FC = () => {
           <div>
             <div className="flex items-center space-x-2">
               <h2 className="text-sm font-bold text-[var(--text-primary)] font-mono tracking-wide">
-                SKYGUARDIAN-X1
+                Raisoni-Drone_P7
               </h2>
               <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-[var(--status-success-bg)] text-[var(--status-success)] border border-[var(--status-success-border)] font-semibold">
                 PATROLLING SECTOR A ➔ B
@@ -21,7 +21,7 @@ export const LiveTelemetryHUD: React.FC = () => {
             </div>
             <p className="text-xs text-[var(--text-secondary)] mt-0.5 flex items-center gap-1.5">
               <MapPin className="w-3.5 h-3.5 text-[var(--brand-primary)]" />
-              <span>Pune Municipal Corridor (Viman Nagar - Wagholi Highway)</span>
+              <span>Nagar Road Highway Corridor (Point A ➔ Point B)</span>
             </p>
           </div>
         </div>
@@ -42,7 +42,7 @@ export const LiveTelemetryHUD: React.FC = () => {
             <Gauge className="w-4 h-4 text-[var(--brand-primary)] shrink-0" />
             <div>
               <div className="text-[10px] text-[var(--text-muted)] uppercase">Speed / Alt</div>
-              <div className="font-bold text-[var(--text-primary)]">24.2 km/h • 48.5m</div>
+              <div className="font-bold text-[var(--text-primary)]">7 km/h • 48.5m</div>
             </div>
           </div>
 
@@ -51,7 +51,7 @@ export const LiveTelemetryHUD: React.FC = () => {
             <Compass className="w-4 h-4 text-[var(--status-warning)] shrink-0" />
             <div>
               <div className="text-[10px] text-[var(--text-muted)] uppercase">GPS / Heading</div>
-              <div className="font-bold text-[var(--text-primary)]">18.5679°N, 042°NE</div>
+              <div className="font-bold text-[var(--text-primary)]">18.5575°N, 042°NE</div>
             </div>
           </div>
 

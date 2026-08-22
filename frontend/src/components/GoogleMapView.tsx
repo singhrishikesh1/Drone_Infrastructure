@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
 import { Defect } from '../types';
-import { Navigation, Key, X } from 'lucide-react';
+import { Navigation, Key, X, Gauge, MapPin } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { useToast } from './ToastNotification';
 
@@ -32,12 +32,12 @@ const POINT_B_COORDS: [number, number] = [18.5808, 73.9818]; // Point B: Nagar R
 // Dense 13-point road curve geometry calibrated strictly to the yellow Nagar Road highway line
 const ACTIVE_DRONE: SingleDroneUnit = {
   id: 'DRONE-PUNE-01',
-  callsign: 'SkyGuardian-X1',
-  name: 'SkyGuardian-X1 Autonomous Patrol',
+  callsign: 'Raisoni-Drone_P7',
+  name: 'Raisoni-Drone_P7 Autonomous Patrol',
   model: 'Matrice 300 RTK Industrial',
   status: 'FLYING STRICTLY ALONG NAGAR ROAD HIGHWAY',
   battery: 88,
-  speedKmH: 24.2,
+  speedKmH: 7.0,
   altitude: 48.5,
   sector: 'Nagar Road Highway (Point A ➔ Point B)',
   color: '#0284C7',
@@ -74,7 +74,7 @@ export const GoogleMapView: React.FC<MapViewProps> = ({
   const pointBMarkerRef = useRef<L.Marker | null>(null);
   const animFrameRef = useRef<number | null>(null);
 
-  const [activeLocationFilter, setActiveLocationFilter] = useState<string>('all');
+  const [movingFromLocation, setMovingFromLocation] = useState<string>('Point A (Depot)');
   const [googleApiKey, setGoogleApiKey] = useState<string>(
     (import.meta as any).env?.VITE_GOOGLE_MAPS_API_KEY || ''
   );
@@ -161,11 +161,7 @@ export const GoogleMapView: React.FC<MapViewProps> = ({
       }
     });
 
-    const filteredDefects = defects.filter(d => {
-      return activeLocationFilter === 'all' || d.locationName.toLowerCase().includes(activeLocationFilter.toLowerCase());
-    });
-
-    filteredDefects.forEach((defect) => {
+    defects.forEach((defect) => {
       let pinColor = '#16A34A';
       if (defect.riskLevel === 'CRITICAL') pinColor = '#E11D48';
       else if (defect.riskLevel === 'HIGH' || defect.riskLevel === 'MEDIUM') pinColor = '#D97706';
@@ -189,7 +185,7 @@ export const GoogleMapView: React.FC<MapViewProps> = ({
     if (selectedDefect && map) {
       map.setView([selectedDefect.lat, selectedDefect.lng], 14, { animate: true });
     }
-  }, [defects, selectedDefect, activeLocationFilter]);
+  }, [defects, selectedDefect]);
 
   // Render High Precision Polyline Corridor directly along Nagar Road
   useEffect(() => {
@@ -227,7 +223,7 @@ export const GoogleMapView: React.FC<MapViewProps> = ({
     let isMovingForward = true;
     let currentSegment = 0;
     let segmentProgress = 0;
-    const stepSpeed = 0.008; // Smooth, precise flight along Nagar Road segments
+    const stepSpeed = 0.002; // Slow, realistic flight speed (7 km/h) along Nagar Road segments
 
     const createDroneIconHtml = (headingAngle: number, currentLeg: string) => {
       const activeColor = resolvedTheme === 'dark' ? '#38BDF8' : '#0284C7';
@@ -247,7 +243,7 @@ export const GoogleMapView: React.FC<MapViewProps> = ({
           </div>
           <div style="position: absolute; top: -14px; white-space: nowrap; background: ${bgCard}; border: 1.5px solid ${activeColor}; color: ${textColor}; font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 800; padding: 2px 7px; border-radius: 5px; display: flex; align-items: center; gap: 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.18);">
             <span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background-color: #16A34A;"></span>
-            ${ACTIVE_DRONE.callsign} (${currentLeg})
+            ${ACTIVE_DRONE.callsign} (${currentLeg} • ${ACTIVE_DRONE.speedKmH} km/h)
           </div>
         </div>
       `;
@@ -277,13 +273,15 @@ export const GoogleMapView: React.FC<MapViewProps> = ({
           if (currentSegment >= numSegments) {
             isMovingForward = false;
             currentSegment = numSegments - 1;
-            setCurrentLegText('Reached Point B (Wagholi). Returning B ➔ A directly above Nagar Road');
+            setMovingFromLocation('Point B (Target)');
+            setCurrentLegText('Reached Point B (Target). Returning B ➔ A directly above Nagar Road');
           }
         } else {
           currentSegment--;
           if (currentSegment < 0) {
             isMovingForward = true;
             currentSegment = 0;
+            setMovingFromLocation('Point A (Depot)');
             setCurrentLegText('Reached Point A (Depot). Starting A ➔ B directly above Nagar Road');
           }
         }
@@ -307,6 +305,12 @@ export const GoogleMapView: React.FC<MapViewProps> = ({
         : 1 - (currentSegment + (1 - segmentProgress)) / numSegments;
 
       setRouteProgressPct(Math.round(totalProgressRatio * 100));
+
+      if (isMovingForward) {
+        setMovingFromLocation('Point A (Depot)');
+      } else {
+        setMovingFromLocation('Point B (Target)');
+      }
 
       if (droneMarkerRef.current) {
         droneMarkerRef.current.setLatLng([lat, lng]);
@@ -359,34 +363,27 @@ export const GoogleMapView: React.FC<MapViewProps> = ({
             </div>
           </div>
 
-          {/* Location Sector Filter Buttons & API Key Button */}
+          {/* Location / Speed / Origin Telemetry Badges & API Key Button */}
           <div className="flex items-center space-x-2 overflow-x-auto w-full sm:w-auto font-mono text-[11px]">
             <button
               onClick={() => setShowApiKeyModal(true)}
-              className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-[var(--bg-elevated)] border border-[var(--border-subtle)] hover:border-[var(--border-strong)] text-[var(--text-primary)] font-semibold transition-all shadow-xs"
+              className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-[var(--bg-elevated)] border border-[var(--border-subtle)] hover:border-[var(--border-strong)] text-[var(--text-primary)] font-semibold transition-all shadow-xs shrink-0"
             >
               <Key className="w-3.5 h-3.5 text-[var(--brand-primary)]" />
               <span>{googleApiKey ? 'API KEY SET' : 'CONFIGURE MAPS API'}</span>
             </button>
 
-            {[
-              { id: 'all', label: 'Nagar Road Corridor' },
-              { id: 'viman nagar', label: 'Viman Nagar' },
-              { id: 'kharadi', label: 'Kharadi' },
-              { id: 'wagholi', label: 'Wagholi' }
-            ].map((loc) => (
-              <button
-                key={loc.id}
-                onClick={() => setActiveLocationFilter(loc.id)}
-                className={`px-3 py-1.5 rounded-lg font-semibold transition-all ${
-                  activeLocationFilter === loc.id
-                    ? 'bg-[var(--brand-primary)] text-white shadow-xs'
-                    : 'bg-[var(--bg-elevated)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] border border-[var(--border-subtle)]'
-                }`}
-              >
-                {loc.label}
-              </button>
-            ))}
+            {/* Current Drone Speed Badge */}
+            <div className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-[var(--brand-primary)]/10 text-[var(--brand-primary)] border border-[var(--brand-primary)]/30 font-bold shrink-0 shadow-xs">
+              <Gauge className="w-3.5 h-3.5" />
+              <span>SPEED: {ACTIVE_DRONE.speedKmH} KM/H</span>
+            </div>
+
+            {/* Moving From Location Badge */}
+            <div className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-[var(--bg-elevated)] text-[var(--text-primary)] border border-[var(--border-subtle)] font-bold shrink-0 shadow-xs">
+              <MapPin className="w-3.5 h-3.5 text-[var(--status-success)]" />
+              <span>MOVING FROM: <span className="text-[var(--brand-primary)]">{movingFromLocation}</span></span>
+            </div>
           </div>
         </div>
 
@@ -395,12 +392,20 @@ export const GoogleMapView: React.FC<MapViewProps> = ({
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
             <div className="flex items-center space-x-2 text-[var(--text-secondary)]">
               <span className="text-[var(--brand-primary)] font-bold">NAGAR ROAD ROUTE:</span>
-              <span className="px-2 py-0.5 rounded bg-[var(--status-success-bg)] text-[var(--status-success)] border border-[var(--status-success-border)] font-bold text-[10px]">
+              <span className={`px-2 py-0.5 rounded border font-bold text-[10px] ${
+                movingFromLocation.includes('Point A')
+                  ? 'bg-[var(--status-success-bg)] text-[var(--status-success)] border-[var(--status-success-border)]'
+                  : 'bg-[var(--bg-surface)] text-[var(--text-muted)] border-[var(--border-subtle)]'
+              }`}>
                 Point A (Depot)
               </span>
               <span>➔</span>
-              <span className="px-2 py-0.5 rounded bg-[var(--status-critical-bg)] text-[var(--status-critical)] border border-[var(--status-critical-border)] font-bold text-[10px]">
-                Point B (Wagholi)
+              <span className={`px-2 py-0.5 rounded border font-bold text-[10px] ${
+                movingFromLocation.includes('Point B')
+                  ? 'bg-[var(--status-critical-bg)] text-[var(--status-critical)] border-[var(--status-critical-border)]'
+                  : 'bg-[var(--bg-surface)] text-[var(--text-muted)] border-[var(--border-subtle)]'
+              }`}>
+                Point B (Target)
               </span>
             </div>
 
@@ -426,20 +431,27 @@ export const GoogleMapView: React.FC<MapViewProps> = ({
         <div ref={containerRef} className="w-full h-full bg-[var(--bg-app)]" />
 
         {/* Telemetry Tag */}
-        <div className="absolute top-3 left-3 z-[400] bg-[var(--bg-surface)]/90 backdrop-blur-md px-3.5 py-2 rounded-xl border border-[var(--border-subtle)] text-xs font-mono text-[var(--text-primary)] space-y-1 shadow-md">
+        <div className="absolute top-3 left-3 z-[400] bg-[var(--bg-surface)]/90 backdrop-blur-md px-3.5 py-2.5 rounded-xl border border-[var(--border-subtle)] text-xs font-mono text-[var(--text-primary)] space-y-1 shadow-md">
           <div className="font-bold flex items-center gap-2 text-[var(--brand-primary)]">
-            <span className="w-2 h-2 rounded-full bg-[var(--status-success)] animate-pulse" /> SKYGUARDIAN-X1 ROAD PATROL
+            <span className="w-2 h-2 rounded-full bg-[var(--status-success)] animate-pulse" /> RAISONI-DRONE_P7 ROAD PATROL
           </div>
-          <div className="text-[11px] text-[var(--text-secondary)]">
-            NAVIGATING: <span className="text-[var(--text-primary)] font-semibold">STRICTLY ABOVE NAGAR ROAD HIGHWAY</span>
+          <div className="text-[11px] text-[var(--text-secondary)] space-y-0.5">
+            <div className="flex items-center gap-1.5">
+              <span>MOVING FROM:</span>
+              <span className="text-[var(--text-primary)] font-bold">{movingFromLocation}</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span>DRONE SPEED:</span>
+              <span className="text-[var(--status-success)] font-bold">{ACTIVE_DRONE.speedKmH} km/h</span>
+            </div>
           </div>
         </div>
 
         {/* Map Legend */}
         <div className="absolute bottom-3 left-3 z-[400] bg-[var(--bg-surface)]/90 backdrop-blur-md px-3 py-1.5 rounded-xl border border-[var(--border-subtle)] text-[11px] font-mono flex items-center space-x-3 text-[var(--text-secondary)] shadow-md">
-          <span className="flex items-center gap-1.5 font-medium"><span className="w-2.5 h-2.5 rounded-sm bg-[#16A34A]" /> Point A (Viman Nagar)</span>
-          <span className="flex items-center gap-1.5 font-medium"><span className="w-2.5 h-2.5 rounded-sm bg-[#E11D48]" /> Point B (Wagholi)</span>
-          <span className="flex items-center gap-1.5 font-medium text-[var(--brand-primary)]">⚡ Nagar Road Highway Corridor</span>
+          <span className="flex items-center gap-1.5 font-medium"><span className="w-2.5 h-2.5 rounded-sm bg-[#16A34A]" /> Point A (Depot)</span>
+          <span className="flex items-center gap-1.5 font-medium"><span className="w-2.5 h-2.5 rounded-sm bg-[#E11D48]" /> Point B (Target)</span>
+          <span className="flex items-center gap-1.5 font-medium text-[var(--brand-primary)]">⚡ Speed: {ACTIVE_DRONE.speedKmH} km/h</span>
         </div>
       </div>
 

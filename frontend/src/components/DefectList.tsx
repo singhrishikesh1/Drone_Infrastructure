@@ -122,7 +122,7 @@ export const DefectList: React.FC<DefectListProps> = ({ defects, onSelectDefect,
                 {/* Metadata */}
                 <div className="flex items-center justify-between text-[10px] font-mono text-[var(--text-secondary)] bg-[var(--bg-elevated)] p-2 rounded-lg border border-[var(--border-subtle)]">
                   <span>DETECTED: <strong>{defect.timestamp || 'Recent'}</strong></span>
-                  <span>INSPECTOR: <strong className="text-[var(--brand-primary)]">{defect.inspector || 'SkyGuardian-X1'}</strong></span>
+                  <span>INSPECTOR: <strong className="text-[var(--brand-primary)]">{defect.inspector || 'Raisoni-Drone_P7'}</strong></span>
                 </div>
 
                 {/* Workflow Status Pipeline */}

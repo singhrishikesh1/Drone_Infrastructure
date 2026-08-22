@@ -13,9 +13,9 @@ export const AirSimUploadModal: React.FC<AirSimUploadModalProps> = ({ isOpen, on
   if (!isOpen) return null;
 
   const { addToast } = useToast();
-  const [assetType, setAssetType] = useState<'road' | 'bridge' | 'railway' | 'building'>('road');
+  const [assetType, setAssetType] = useState<'road' | 'bridge'>('road');
   const [assetName, setAssetName] = useState('Pune Outer Ring Road (Section 4)');
-  const [locationName, setLocationName] = useState('Viman Nagar - Wagholi Sector, Pune');
+  const [locationName, setLocationName] = useState('Nagar Road Corridor (Point A ➔ Point B), Pune');
   const [scanning, setScanning] = useState(false);
   const [stepText, setStepText] = useState('');
 
@@ -46,7 +46,7 @@ export const AirSimUploadModal: React.FC<AirSimUploadModalProps> = ({ isOpen, on
           lat: 18.5679,
           lng: 73.9143,
           altitude: 35.0,
-          inspectorName: "SkyGuardian-X1 Autonomous Patrol"
+          inspectorName: "Raisoni-Drone_P7 Autonomous Patrol"
         })
       });
 
@@ -92,7 +92,7 @@ export const AirSimUploadModal: React.FC<AirSimUploadModalProps> = ({ isOpen, on
             },
             riskReasons: ['Vehicle axle damage risk', 'Monsoon water accumulation hazard', 'High traffic corridor speed hazard'],
             timestamp: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
-            inspector: 'SkyGuardian-X1',
+            inspector: 'Raisoni-Drone_P7',
             status: 'OPEN',
             alertSent: true,
             thumbnailUrl: 'https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&w=600&q=80'
