@@ -8,4 +8,4 @@
 ## Key Features
 
 
-- Autonomous Drone Fleet Tracking**: Live GPS coordinates, battery 
+- Autonomous Drone Fleet Tracking**: Live GPS coordinates, 
