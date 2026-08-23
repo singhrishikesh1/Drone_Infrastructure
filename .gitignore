@@ -9,6 +9,11 @@ build/
 **/dist/
 **/build/
 
+# Database files
+*.db
+*.db-journal
+backend/prisma/*.db
+
 # Python
 __pycache__/
 **/__pycache__/

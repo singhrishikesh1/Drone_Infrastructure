@@ -1,0 +1,88 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String
+  name         String
+  role         String   @default("INSPECTOR")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Drone {
+  id           String   @id @default(uuid())
+  droneCode    String   @unique
+  name         String
+  status       String   @default("ACTIVE")
+  batteryPct   Int      @default(100)
+  payloadType  String   @default("4K LiDAR & Thermal Sensor")
+  currentLat   Float
+  currentLng   Float
+  lastServiced String   @default("2026-08-15")
+  healthScore  Int      @default(98)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  defects Defect[]
+}
+
+model Defect {
+  id                 String   @id @default(uuid())
+  title              String
+  assetName          String
+  assetType          String
+  locationName       String
+  lat                Float
+  lng                Float
+  altitude           Float    @default(35.0)
+  riskLevel          String   @default("MEDIUM")
+  riskScore          Int      @default(50)
+  defectClass        String
+  confidence         Float    @default(0.95)
+  volumetricJson     String   // Stores JSON string of volume, area, depth, etc.
+  costEstimationJson String   // Stores JSON string of total cost, currency, materials, action
+  riskReasonsJson    String   // Stores JSON string array of reasons
+  inspector          String   @default("Autonomous AirSim Drone Inspector")
+  status             String   @default("OPEN")
+  alertSent          Boolean  @default(false)
+  thumbnailUrl       String
+  timestamp          String
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  droneId            String?
+  drone              Drone?   @relation(fields: [droneId], references: [id])
+  servicingTickets   ServicingTicket[]
+}
+
+model ServicingTicket {
+  id            String   @id @default(uuid())
+  defectId      String?
+  defect        Defect?  @relation(fields: [defectId], references: [id])
+  title         String
+  assetName     String
+  status        String   @default("PENDING")
+  priority      String   @default("HIGH")
+  estimatedCost Float
+  assignedCrew  String
+  scheduledDate String
+  notes         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model AnalyticsSnapshot {
+  id           String   @id @default(uuid())
+  metricName   String
+  metricValue  Float
+  metadataJson String?
+  createdAt    DateTime @default(now())
+}
